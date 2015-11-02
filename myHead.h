@@ -46,7 +46,7 @@ extern int rBufferSize;		// -rbufsize -1
 
 
 // util functions
-char getArguments(int argc, char *argv[]);
+void getArguments(int argc, char *argv[]);
 void printBuffer(char *buf, int bSize);
 
 // connect
@@ -54,17 +54,5 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in *listenAddress);
 void myAccept(int listenSocket);
 
-if (sendto(s, my_message, strlen(my_message), 0, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
-	perror("sendto failed");
-	return 0;
-}
-
-struct sockaddr_in senderAddress;
-socklen_t addrlen = sizeof(senderAddress);
-recvlen = recvfrom(s, buf, BUFSIZE, 0, (struct sockaddr *)&senderAddress, &addrlen);
-if (recvlen > 0) {
-    buf[recvlen] = 0;
-    printf("received message: \"%s\"\n", buf);
-}
 
 #endif

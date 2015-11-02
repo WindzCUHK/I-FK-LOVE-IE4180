@@ -13,7 +13,7 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 	int connectSocket;
 
 	// handle host for address
-	inet_aton(host, &(serverAddress->sin_addr.s_addr));
+	inet_aton(host, &(serverAddress->sin_addr));
 	serverAddress->sin_addr.s_addr = htonl(serverAddress->sin_addr.s_addr);
 
 	// address info
@@ -22,8 +22,8 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 	serverAddress->sin_port = htons(port);
 
 	// create socket
-	int type = (protocol == UDP) ? SOCK_DGRAM : SOCK_STREAM;
-	connectSocket = socket(AF_INET, type, 0;
+	int type = ((protocol == UDP) ? SOCK_DGRAM : SOCK_STREAM);
+	connectSocket = socket(AF_INET, type, 0);
 	if (connectSocket == -1) myDied("socket()");
 
 	// end for UDP
@@ -46,7 +46,7 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 
 	// handle host for address
 	if (host != NULL) {
-		inet_aton(host, &(listenAddress->sin_addr.s_addr));
+		inet_aton(host, &(listenAddress->sin_addr));
 		listenAddress->sin_addr.s_addr = htonl(listenAddress->sin_addr.s_addr);
 	} else {
 		listenAddress->sin_addr.s_addr = htonl(INADDR_ANY);
@@ -54,7 +54,7 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 
 	// create socket
 	int type = (protocol == UDP) ? SOCK_DGRAM : SOCK_STREAM;
-	listenSocket = socket(AF_INET, type, 0;
+	listenSocket = socket(AF_INET, type, 0);
 	if (listenSocket == -1) myDied("socket()");
 
 	// set recv and send buffer size
@@ -87,7 +87,7 @@ void myAccept(int listenSocket) {
 
 		// accept new socket
 		memset((char *) &clientAddress, 0, sizeof(clientAddress));
-		clientSocket = accept(listenSocket, (struct sockaddr *) &client, &addressSize);
+		clientSocket = accept(listenSocket, (struct sockaddr *) &clientAddress, &addressSize);
 		if (clientSocket == -1) {
 			perror("accept()");
 			continue;

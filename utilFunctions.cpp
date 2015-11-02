@@ -15,14 +15,14 @@ void printBuffer(char *buf, int bSize) {
 
 
 void strToLower(char *str) {
-	for (int i = 0; i < strlen(str); i++) {
+	for (unsigned int i = 0; i < strlen(str); i++) {
 		str[i] = tolower(str[i]);
 	}
 }
 bool isInteger(char *str) {
 	bool isDigit = true;
 
-	for (int i = 0; i < strlen(str); i++) {
+	for (unsigned int i = 0; i < strlen(str); i++) {
 		if (!isdigit(str[i])) isDigit = false;
 	}
 
@@ -32,7 +32,7 @@ void errorExist(char *msg) {
 	cout << "Invalid value for " << msg << endl;
 	exit(1);
 }
-char getArguments(int argc, char *argv[]) {
+void getArguments(int argc, char *argv[]) {
 
 	for (int idx = 1; idx < argc; idx++) {
 
