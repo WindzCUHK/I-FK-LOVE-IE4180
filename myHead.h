@@ -26,7 +26,13 @@
 typedef enum {SEND, RECV, HOST, RESPONSE} Mode;
 typedef enum {TCP, UDP} Protocol;
 
-
+typedef HelloPackage struct {
+	unsigned int packageSize;
+	unsigned int packageNummber;
+	unsigned int txRate;
+	unsigned int bufferSize;
+	unsigned char protocol;
+};
 
 // common
 extern Mode mode;			// -send, -recv, -host, -response
@@ -37,7 +43,7 @@ extern int packageSize;		// -pktsize 1000 bytes
 extern char* rhostname;		// -host, -rhost localhost
 extern int rPort;			// -rport 4180
 extern int sBufferSize;		// -sbufsize -1
-extern double txRate;		// -pktrate 1000 bytes/second
+extern int txRate;		// -pktrate 1000 bytes/second
 extern int packageNummber;	// -pktnum 0
 // recv
 extern char* lhostname;		// -lhost IN_ADDR_ANY
@@ -52,6 +58,14 @@ void printBuffer(char *buf, int bSize);
 // connect
 int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in *serverAddress);
 int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in *listenAddress);
+
+// package
+void setSequence(char *packageBuffer, unsigned int *currentSequence);
+unsigned int getSequence(char *packageBuffer);
+char * createPackageBuffer(int bufferSize);
+void freePackageBuffer(char *packageBuffer);
+void initHello(HelloPackage *hello);
+
 
 
 #endif

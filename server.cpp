@@ -9,7 +9,7 @@ int packageSize;
 char* rhostname;
 int rPort;
 int sBufferSize;
-double txRate;
+int txRate;
 int packageNummber;
 char* lhostname;
 int lPort;

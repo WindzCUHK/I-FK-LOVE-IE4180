@@ -134,7 +134,7 @@ void getArguments(int argc, char *argv[]) {
 		else if (strcmp(argv[idx], "-pktrate") == 0) {
 			idx++;
 			if (isInteger(argv[idx])) {
-				txRate = (double) atoi(argv[idx]);
+				txRate = atoi(argv[idx]);
 				continue;
 			} else errorExist(argv[idx - 1]);
 		}
