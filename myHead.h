@@ -52,7 +52,6 @@ void printBuffer(char *buf, int bSize);
 // connect
 int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in *serverAddress);
 int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in *listenAddress);
-void myAccept(int listenSocket);
 
 
 #endif
