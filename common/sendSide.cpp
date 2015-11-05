@@ -28,6 +28,8 @@ int mySend(bool isUDP, int socket, struct sockaddr *addr, char *package, int pac
 
 void mySendLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, int rate, unsigned int maxSequence) {
 
+	printAddress(addr);
+
 	char *package = createPackageBuffer(packageSize);
 	unsigned long long sentBytes = 0;
 	unsigned int currentSequence = 0;
@@ -56,7 +58,9 @@ void mySendLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *ad
 
 			// sent package
 			setAndIncreaseSequence(package, &currentSequence);
+			cout << "before sent: " << sentBytes << endl;
 			sentBytes += mySend(isUDP, socket, addr, package, packageSize);
+			cout << "after sent: " << sentBytes << endl;
 
 			// update statistics
 			if (isClient) statistics_display_lock.lock();

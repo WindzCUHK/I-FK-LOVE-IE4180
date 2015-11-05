@@ -11,6 +11,17 @@ void printBuffer(char *buf, int bSize) {
 	}
 	printf("\n\n");
 }
+void printAddress(struct sockaddr_in *address) {
+
+	char ip[INET_ADDRSTRLEN];
+	int port = address->sin_port;
+
+	if (inet_ntop(address->sin_family, &(address->sin_addr), clientIP, INET_ADDRSTRLEN) == NULL) {
+		perror("Parse IP failed with error code, printAddress()");
+	}
+
+	cout << ip << ":" << port << endl;
+}
 
 
 void strToLower(char *str) {
