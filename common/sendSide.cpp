@@ -9,12 +9,12 @@ int mySend(bool isUDP, int socket, struct sockaddr *addr, char *package, int pac
 	if (isUDP) {
 		while (send_size != packageSize) {
 			send_size += sendto(socket, package + send_size, packageSize - send_size, 0, addr, sizeof(*addr));
-			if (send_size = 0) return 0;
+			if (send_size == 0) return 0;
 		}
 	} else {
 		while (send_size != packageSize) {
 			send_size += send(socket, package + send_size, packageSize - send_size, 0);
-			if (send_size = 0) return 0;
+			if (send_size == 0) return 0;
 		}
 	}
 

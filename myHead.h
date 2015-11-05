@@ -72,7 +72,7 @@ extern std::unique_lock<std::mutex> statistics_display_lock;
 // util functions
 void getArguments(int argc, char *argv[]);
 void printBuffer(char *buf, int bSize);
-void printAddress(struct sockaddr_in *address);
+void printAddress(struct sockaddr *address);
 void printStat(Statistics *stat, Mode mode, unsigned int packageSize);
 
 // connect
