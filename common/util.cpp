@@ -4,7 +4,6 @@ using namespace std;
 
 
 
-
 void printBuffer(char *buf, int bSize) {
 	for (int i = 0; i < bSize; i++) {
 		if (i > 0) printf(":");
@@ -142,4 +141,47 @@ void getArguments(int argc, char *argv[]) {
 		// unknown option
 		else errorExist(argv[idx]);
 	}
+}
+
+void printStat(Statistics *stat, Mode mode, unsigned int packageSize) {
+
+	static double rateUnitConstant = 1000.0 / (1024.0 * 1024.0); // byte per ms => Mb per s
+	static char *sendOutputFormat = "Elapsed [%ld ms] Rate [%.9lf Mbps]";
+	static char *recvOutputFormat1 = "Elapsed [%ld ms] Pkts [%ld] Lost [%ld, %.2lf%%] ";
+	static char *recvOutputFormat2 = "Rate [%.9lf Mbps] Jitter [%.2lf ms]";
+	// why separate? because it crash in windows
+
+	chrono::system_clock::duration elapsedTime;
+	unsigned long long elapsedTimeInLong;
+	double lostPercentage, rate;
+	unsigned long long packageArrived;
+
+	// some calculation
+	elapsedTime = chrono::system_clock::now() - stat->startTime;
+	elapsedTimeInLong = (chrono::duration_cast<std::chrono::milliseconds> (elapsedTime)).count();
+	if (elapsedTimeInLong == 0L) elapsedTimeInLong = 1;
+	packageArrived = stat->currentSequence - stat->lostCount;
+	rate = (((double)stat->byteOnTraffic) / ((double)elapsedTimeInLong)) * rateUnitConstant;
+
+	// std::cout << ((double)stat->byteOnTraffic) / ((double)elapsedTimeInLong) << ", " << rate << std::endl;
+	// std::cout << stat->byteOnTraffic << ", " << elapsedTimeInLong << std::endl;
+
+	// calculation + display
+	switch (mode) {
+		case RECV:
+			lostPercentage = 100.0 * ((double)stat->lostCount) / ((double)(stat->currentSequence));
+			printf(recvOutputFormat1, elapsedTimeInLong, packageArrived, stat->lostCount, lostPercentage);
+			printf(recvOutputFormat2, rate, stat->jitter);
+			break;
+		case SEND:
+			printf(sendOutputFormat, elapsedTimeInLong, rate);
+			break;
+		case RESPONSE:
+			break;
+		default:
+			puts("on9 mode: no stat");
+			break;
+	}
+		
+	std::cout << std::endl;
 }

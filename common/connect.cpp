@@ -14,7 +14,7 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 	memset((char *) serverAddress, 0, sizeof(*serverAddress));
 
 	// handle host for address
-	inet_aton(host, &(serverAddress->sin_addr));
+	if (inet_pton(AF_INET, host, &(serverAddress->sin_addr)) != 1) myDied("inet_pton()");
 
 	// address info
 	serverAddress->sin_family = AF_INET;
@@ -45,7 +45,7 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 
 	// handle host for address
 	if (host != NULL) {
-		inet_aton(host, &(listenAddress->sin_addr));
+		if (inet_pton(AF_INET, host, &(listenAddress->sin_addr)) != 1) myDied("inet_pton()");
 	}
 
 	// create socket
@@ -54,10 +54,10 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 	if (listenSocket == -1) myDied("socket()");
 
 	// set recv and send buffer size
-	if (rBufferSize > 0) {
+	if (mode == RECV && rBufferSize > 0) {
 		if (setsockopt(listenSocket, SOL_SOCKET, SO_RCVBUF, (const char *) &rBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_RCVBUF)");
 	}
-	if (sBufferSize > 0) {
+	if (mode == SEND && sBufferSize > 0) {
 		if (setsockopt(listenSocket, SOL_SOCKET, SO_SNDBUF, (const char *) &sBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_SNDBUF)");
 	}
 
