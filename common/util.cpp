@@ -15,7 +15,7 @@ void printAddress(struct sockaddr *address) {
 
 	struct sockaddr_in *addr = (struct sockaddr_in *) address;
 	char ip[INET_ADDRSTRLEN];
-	int port = addr->sin_port;
+	int port = ntohs(addr->sin_port);
 
 	if (inet_ntop(addr->sin_family, &(addr->sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
 		perror("Parse IP failed with error code, printAddress()");
@@ -165,25 +165,39 @@ void initStat(Statistics *stat) {
 	stat->jitter = 0.0;
 }
 
-void printStat(Statistics *stat, Mode mode, unsigned int packageSize) {
+void initResponseStat(ResponseStat *stat) {
+	stat->maxTime = 0;
+	stat->minTime = (unsigned long long) -1L;
+
+	stat->meanTime = 0.0;
+	stat->packageGot = 0;
+
+	stat->jitter = 0.0;
+}
+
+void printStat(Statistics *stat, ResponseStat *rStat, Mode mode, unsigned int packageSize) {
 
 	static double rateUnitConstant = 1000.0 / (1024.0 * 1024.0); // byte per ms => Mb per s
 	static char *sendOutputFormat = "Elapsed [%ld ms] Rate [%.9lf Mbps]";
 	static char *recvOutputFormat1 = "Elapsed [%ld ms] Pkts [%ld] Lost [%ld, %.2lf%%] ";
 	static char *recvOutputFormat2 = "Rate [%.9lf Mbps] Jitter [%.2lf ms]";
+	static char *responseOutputFormat = "Pkts [%d] Max [%lld ms] Min [%lld ms] Mean [%.2lf ms] Jitter [%.2lf ms]";
 	// why separate? because it crash in windows
 
+	// variables
 	chrono::system_clock::duration elapsedTime;
 	unsigned long long elapsedTimeInLong;
 	double lostPercentage, rate;
 	unsigned long long packageArrived;
 
-	// some calculation
-	elapsedTime = chrono::system_clock::now() - stat->startTime;
-	elapsedTimeInLong = (chrono::duration_cast<std::chrono::milliseconds> (elapsedTime)).count();
-	if (elapsedTimeInLong == 0L) elapsedTimeInLong = 1;
-	packageArrived = stat->currentSequence - stat->lostCount;
-	rate = (((double)stat->byteOnTraffic) / ((double)elapsedTimeInLong)) * rateUnitConstant;
+	if (mode != RESPONSE) {
+		// some calculation
+		elapsedTime = chrono::system_clock::now() - stat->startTime;
+		elapsedTimeInLong = (chrono::duration_cast<std::chrono::milliseconds> (elapsedTime)).count();
+		if (elapsedTimeInLong == 0L) elapsedTimeInLong = 1;
+		packageArrived = stat->currentSequence - stat->lostCount;
+		rate = (((double)stat->byteOnTraffic) / ((double)elapsedTimeInLong)) * rateUnitConstant;
+	}
 
 	// std::cout << ((double)stat->byteOnTraffic) / ((double)elapsedTimeInLong) << ", " << rate << std::endl;
 	// std::cout << stat->byteOnTraffic << ", " << elapsedTimeInLong << std::endl;
@@ -199,6 +213,7 @@ void printStat(Statistics *stat, Mode mode, unsigned int packageSize) {
 			printf(sendOutputFormat, elapsedTimeInLong, rate);
 			break;
 		case RESPONSE:
+			printf(responseOutputFormat, rStat->packageGot, rStat->maxTime, rStat->minTime, rStat->meanTime, rStat->jitter);
 			break;
 		default:
 			puts("on9 mode: no stat");

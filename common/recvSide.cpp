@@ -10,24 +10,24 @@ int myRecv(bool isUDP, int socket, struct sockaddr *addr, char *package, int pac
 	if (isUDP) {
 		while (recv_size < packageSize) {
 			result = recvfrom(socket, package + recv_size, packageSize - recv_size, 0, NULL, NULL);
-			if (result == 0) return 0;
-			if (result == -1) break;
+			if (result == 0 || result == -1) return result;
 			recv_size += result;
 		}
 	} else {
 		while (recv_size < packageSize) {
 			result = recv(socket, package + recv_size, packageSize - recv_size, 0);
-			if (result == 0) return 0;
-			if (result == -1) break;
+			if (result == 0 || result == -1) return result;
 			recv_size += result;
 		}
 	}
 
-	if (recv_size == -1 || recv_size != packageSize) {
+	if (recv_size != packageSize) {
 		perror("Recv failed, exiting...");
 		exit(1);
 	}
 
+	// cout << "[" << this_thread::get_id() << "] " << "recv()" << endl;
+	// printBuffer(package, packageSize);
 	return recv_size;
 }
 
@@ -41,8 +41,8 @@ void myRecvLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *ad
 	// get first package
 	gotBytes += myRecv(isUDP, socket, addr, package, packageSize);
 	currentSequence = getSequence(package);
-	cout << "currentSequence: " << currentSequence << endl;
-	printBuffer(package, packageSize);
+	// cout << "currentSequence: " << currentSequence << endl;
+	// printBuffer(package, packageSize);
 	// cout << "myRecvLoop 1" << endl;
 
 	// init stat
@@ -106,15 +106,15 @@ void myRecvLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *ad
 
 		// wait for next package
 		gotPackageBytes = myRecv(isUDP, socket, addr, package, packageSize);
-		if (gotPackageBytes == 0) {
+		if (gotPackageBytes <= 0) {
 			// connection closed
 			freePackageBuffer(package);
 			return;
 		} else {
 			gotBytes += gotPackageBytes;
 			currentSequence = getSequence(package);
-			cout << "currentSequence: " << currentSequence << endl;
-			printBuffer(package, packageSize);
+			// cout << "currentSequence: " << currentSequence << endl;
+			// printBuffer(package, packageSize);
 		}
 		// cout << "myRecvLoop 7" << endl;
 	} while (true);

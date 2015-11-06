@@ -7,6 +7,7 @@
 #include <cstring>
 #include <cctype>
 #include <iostream>
+#include <map>
 
 // thread libraries
 #include <thread>
@@ -48,6 +49,20 @@ typedef struct _HelloPackage {
 	unsigned short clientUdpListenPort;
 } HelloPackage;
 
+typedef struct _ResponseStat {
+
+	unsigned long long maxTime;
+	unsigned long long minTime;
+	
+	double meanTime;
+	unsigned int packageGot;
+
+	std::map<unsigned int, std::chrono::system_clock::time_point> timeStore;
+
+	double jitter;
+
+} ResponseStat;
+
 // common
 extern Mode mode;			// -send, -recv, -host, -response
 extern Protocol protocol;	// -proto udp
@@ -71,8 +86,10 @@ extern std::mutex statistics_display_m;
 void getArguments(int argc, char *argv[]);
 void printBuffer(char *buf, int bSize);
 void printAddress(struct sockaddr *address);
+
 void initStat(Statistics *stat);
-void printStat(Statistics *stat, Mode mode, unsigned int packageSize);
+void initResponseStat(ResponseStat *stat);
+void printStat(Statistics *stat, ResponseStat *rStat, Mode mode, unsigned int packageSize);
 
 // connect
 int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in *serverAddress);
@@ -92,5 +109,9 @@ int mySend(bool isUDP, int socket, struct sockaddr *addr, char *package, int pac
 void mySendLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, int rate, unsigned int maxSequence);
 int myRecv(bool isUDP, int socket, struct sockaddr *addr, char *package, int packageSize);
 void myRecvLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, unsigned int maxSequence);
+
+// response
+void myServerRR(int socket, struct sockaddr *addr, bool isUDP, int packageSize);
+void myClientRR(Statistics *stat, ResponseStat *rStat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, unsigned int maxPackageOnTraffic);
 
 #endif

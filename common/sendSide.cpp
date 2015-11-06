@@ -27,12 +27,14 @@ int mySend(bool isUDP, int socket, struct sockaddr *addr, char *package, int pac
 		exit(1);
 	}
 
+	// cout << "[" << this_thread::get_id() << "] " << "send()" << endl;
+	// printBuffer(package, packageSize);
 	return send_size;
 }
 
 void mySendLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, int rate, unsigned int maxSequence) {
 
-	printAddress(addr);
+	// printAddress(addr);
 
 	char *package = createPackageBuffer(packageSize);
 	int sentPackageBytes;
@@ -66,7 +68,6 @@ void mySendLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *ad
 
 			// sent package
 			setAndIncreaseSequence(package, &currentSequence);
-			cout << "before sent: " << sentBytes << endl;
 			sentPackageBytes = mySend(isUDP, socket, addr, package, packageSize);
 			if (sentPackageBytes != 0 && sentPackageBytes != -1) {
 				sentBytes += sentPackageBytes;
@@ -75,7 +76,6 @@ void mySendLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *ad
 				freePackageBuffer(package);
 				return;
 			}
-			cout << "after sent: " << sentBytes << endl;
 
 			// update statistics
 			if (isClient) {

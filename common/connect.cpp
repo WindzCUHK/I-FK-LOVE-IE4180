@@ -1,6 +1,5 @@
 #include "../myHead.h"
 
-using namespace std;
 
 
 void myDied(char *str) {
@@ -25,6 +24,16 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 	connectSocket = socket(AF_INET, type, 0);
 	if (connectSocket == -1) myDied("socket()");
 
+	// set recv and send buffer size
+	if (mode != SEND && rBufferSize > 0) {
+		// std::cout << "RECV buffer is set" << endl;
+		if (setsockopt(connectSocket, SOL_SOCKET, SO_RCVBUF, (const char *) &rBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_RCVBUF)");
+	}
+	if (mode != RECV && sBufferSize > 0) {
+		// std::cout << "SEND buffer is set" << endl;
+		if (setsockopt(connectSocket, SOL_SOCKET, SO_SNDBUF, (const char *) &sBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_SNDBUF)");
+	}
+
 	// end for UDP
 	if (protocol == UDP) return connectSocket;
 
@@ -47,7 +56,7 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 	if (host != NULL) {
 		if (inet_pton(AF_INET, host, &(listenAddress->sin_addr)) != 1) myDied("inet_pton()");
 	} else {
-		listenAddress->sin_addr.s_addr = INADDR_ANY;
+		listenAddress->sin_addr.s_addr = htonl(INADDR_ANY);
 	}
 
 	// create socket
@@ -56,12 +65,12 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 	if (listenSocket == -1) myDied("socket()");
 
 	// set recv and send buffer size
-	if (mode == RECV && rBufferSize > 0) {
-		cout << "RECV buffer is set" << endl;
+	if (mode != SEND && rBufferSize > 0) {
+		// std::cout << "RECV buffer is set" << endl;
 		if (setsockopt(listenSocket, SOL_SOCKET, SO_RCVBUF, (const char *) &rBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_RCVBUF)");
 	}
-	if (mode == SEND && sBufferSize > 0) {
-		cout << "SEND buffer is set" << endl;
+	if (mode != RECV && sBufferSize > 0) {
+		// std::cout << "SEND buffer is set" << endl;
 		if (setsockopt(listenSocket, SOL_SOCKET, SO_SNDBUF, (const char *) &sBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_SNDBUF)");
 	}
 

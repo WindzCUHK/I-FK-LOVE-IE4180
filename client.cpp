@@ -17,7 +17,7 @@ int rBufferSize = 0;
 
 mutex statistics_display_m;
 
-void displayStatistics(Statistics *stat, Mode mode, int refresh_interval, unsigned int packageSize) {
+void displayStatistics(Statistics *stat, ResponseStat *rStat, Mode mode, int refresh_interval, unsigned int packageSize) {
 
 	chrono::milliseconds refresh_interval_as_ms = chrono::milliseconds(refresh_interval);
 
@@ -40,7 +40,7 @@ void displayStatistics(Statistics *stat, Mode mode, int refresh_interval, unsign
 			continue;
 		}
 
-		printStat(stat, mode, packageSize);
+		printStat(stat, rStat, mode, packageSize);
 
 		statistics_display_m.unlock();
 	}
@@ -81,15 +81,26 @@ int main(int argc, char *argv[]) {
 				cout << "exiting client..." << endl;
 				exit(1);
 			}
-		} else {
+		} else if (mode == SEND) {
 			serverSocket = getConnectSocket(rhostname, rPort, UDP, &serverAddress);
+		} else if (mode == RESPONSE) {
+			struct sockaddr_in responseAddress;
+			serverSocket = getListenSocket(NULL, lPort, UDP, &responseAddress);
+			if (serverSocket == -1) {
+				cout << "UDP already bind()" << endl;
+				cout << "exiting client..." << endl;
+				exit(1);
+			}
+			// the server address struct has no changes
 		}
 	}
 
 	// open display thread
 	Statistics stat;
 	initStat(&stat);
-	thread th(displayStatistics, &stat, mode, displayInterval, (unsigned int) packageSize);
+	ResponseStat rStat;
+	initResponseStat(&rStat);
+	thread th(displayStatistics, &stat, &rStat, mode, displayInterval, (unsigned int) packageSize);
 
 	switch (mode) {
 		case SEND:
@@ -99,7 +110,7 @@ int main(int argc, char *argv[]) {
 			myRecvLoop(true, &stat, serverSocket, (struct sockaddr *) &serverAddress, (protocol == UDP), packageSize, (unsigned int) packageNummber);
 			break;
 		case RESPONSE:
-			// myRR();
+			myClientRR(&stat, &rStat, serverSocket, (struct sockaddr *) &serverAddress, (protocol == UDP), packageSize, (unsigned int) packageNummber);
 			break;
 		default:
 			puts("You are in on99 mode...");

@@ -23,7 +23,7 @@ mutex statistics_display_m;
 void clientHandler(int socket, struct sockaddr_in clientAddress) {
 
 	char clientIP[INET_ADDRSTRLEN];
-	int clientPort = clientAddress.sin_port;
+	int clientPort = ntohs(clientAddress.sin_port);
 	if (inet_ntop(clientAddress.sin_family, &(clientAddress.sin_addr), clientIP, INET_ADDRSTRLEN) == NULL) {
 		perror("Parse client IP failed with error code");
 	}
@@ -37,7 +37,11 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 
 	// wait for hello package
 	HelloPackage hello;
-	myRecv(false, socket, NULL, (char *) &hello, sizeof(hello));
+	if (myRecv(false, socket, NULL, (char *) &hello, sizeof(hello)) <= 0) {
+		cout << "[" << this_thread::get_id() << "] " << "Hello is gg" << endl;
+		cout << "--- thread end " << this_thread::get_id() << endl;
+		return;
+	}
 
 	// server debug print
 	printHello(&hello);
@@ -55,28 +59,50 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 		}
 		// open UDP socket
 		// server recv on RECV & RESPONSE, send on SEND
-		if (mode != SEND) {
+		if (mode == RECV) {
 			socket = getListenSocket(NULL, lPort, UDP, &clientAddress);
 			if (socket == -1) {
-				cout << "UDP already bind()" << endl;
+				cout << "[" << this_thread::get_id() << "] " << "UDP already bind()" << endl;
 				cout << "--- thread end " << this_thread::get_id() << endl;
 				return;
 			}
-		} else {
+		} else if (mode == SEND) {
 			socket = getConnectSocket(rhostname, hello.clientUdpListenPort, UDP, &clientAddress);
+		} else if (mode == RESPONSE) {
+
+			struct sockaddr_in responseAddress;
+			socket = getListenSocket(NULL, lPort, UDP, &responseAddress);
+			if (socket == -1) {
+				cout << "[" << this_thread::get_id() << "] " << "UDP already bind()" << endl;
+				cout << "--- thread end " << this_thread::get_id() << endl;
+				return;
+			}
+
+			int responseSocket = getConnectSocket(rhostname, hello.clientUdpListenPort, UDP, &clientAddress);
+			if (close(responseSocket) == -1) {
+				perror("close(), exiting...");
+				exit(1);
+			}
+
+			clientPort = ntohs(clientAddress.sin_port);
+			if (inet_ntop(clientAddress.sin_family, &(clientAddress.sin_addr), clientIP, INET_ADDRSTRLEN) == NULL) {
+				perror("Parse client IP failed with error code");
+			}
+			cout << "rr client IP: " << clientIP << endl;
+			cout << "rr client port: " << clientPort << endl;
 		}
 	}
 
 	// set buffer size
 	if (hello.bufferSize != 0) {
 		if (mode == SEND) {
-			cout << "SEND buffer is set" << endl;
+			// cout << "SEND buffer is set" << endl;
 			if (setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char *) &(hello.bufferSize), sizeof(unsigned int)) == -1) {
 				perror("setsockopt(SO_SNDBUF)");
 				exit(1);
 			}
 		} else {
-			cout << "RECV buffer is set" << endl;
+			// cout << "RECV buffer is set" << endl;
 			if (setsockopt(socket, SOL_SOCKET, SO_RCVBUF, (const char *) &(hello.bufferSize), sizeof(unsigned int)) == -1) {
 				perror("setsockopt(SO_RCVBUF)");
 				exit(1);
@@ -90,14 +116,16 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 	initStat(&stat);
 	switch (mode) {
 		case RECV:
-			cout << "server in RECV mode" << endl;
+			cout << "[" << this_thread::get_id() << "] " << "server in RECV mode..." << endl;
 			myRecvLoop(false, &stat, socket, (struct sockaddr *) &clientAddress, (protocol == UDP), hello.packageSize, hello.packageNummber);
 			break;
 		case SEND:
-			cout << "server in SEND mode" << endl;
+			cout << "[" << this_thread::get_id() << "] " << "server in SEND mode..." << endl;
 			mySendLoop(false, &stat, socket, (struct sockaddr *) &clientAddress, (protocol == UDP), hello.packageSize, hello.txRate, hello.packageNummber);
 			break;
 		case RESPONSE:
+			cout << "[" << this_thread::get_id() << "] " << "server in RESPONSE mode..." << endl;
+			myServerRR(socket, (struct sockaddr *) &clientAddress, (protocol == UDP), hello.packageSize);
 			break;
 		default:
 			perror("Unknown mode");
@@ -105,7 +133,7 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 	}
 
 	// print overall statistics
-	printStat(&stat, mode, hello.packageSize);
+	if (mode != RESPONSE) printStat(&stat, NULL, mode, hello.packageSize);
 
 	// close socket
 	if (close(socket) == -1) {
@@ -132,7 +160,7 @@ void myAccept(int listenSocket) {
 			perror("accept()");
 			continue;
 		}
-		cout << "Got new client" << endl;
+		cout << "Got new client XD" << endl;
 
 		// start new thread
 		thread t1(clientHandler, clientSocket, clientAddress);
