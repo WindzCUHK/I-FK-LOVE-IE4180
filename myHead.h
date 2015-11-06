@@ -26,19 +26,19 @@
 typedef enum {SEND, RECV, HOST, RESPONSE} Mode;
 typedef enum {TCP, UDP} Protocol;
 
-typedef struct {
-	bool isEnded = false;
+typedef struct _Statistics {
+	bool isEnded;
 
-	bool isSessionStarted = false;
+	bool isSessionStarted;
 	std::chrono::system_clock::time_point startTime;
 
-	unsigned long long byteOnTraffic = 0;
-	unsigned int currentSequence = 0;
-	unsigned int lostCount = 0;
-	double jitter = 0.0;
+	unsigned long long byteOnTraffic;
+	unsigned int currentSequence;
+	unsigned int lostCount;
+	double jitter;
 } Statistics;
 
-typedef struct {
+typedef struct _HelloPackage {
 	unsigned int packageSize;
 	unsigned int packageNummber;
 	unsigned int txRate;
@@ -65,14 +65,13 @@ extern int lPort;			// -lport 4180
 extern int rBufferSize;		// -rbufsize -1
 
 // lock
-extern std::mutex m;
-extern std::unique_lock<std::mutex> statistics_display_lock;
-
+extern std::mutex statistics_display_m;
 
 // util functions
 void getArguments(int argc, char *argv[]);
 void printBuffer(char *buf, int bSize);
 void printAddress(struct sockaddr *address);
+void initStat(Statistics *stat);
 void printStat(Statistics *stat, Mode mode, unsigned int packageSize);
 
 // connect
@@ -92,6 +91,6 @@ void printHello(HelloPackage *hello);
 int mySend(bool isUDP, int socket, struct sockaddr *addr, char *package, int packageSize);
 void mySendLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, int rate, unsigned int maxSequence);
 int myRecv(bool isUDP, int socket, struct sockaddr *addr, char *package, int packageSize);
-void myRecvLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize);
+void myRecvLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, unsigned int maxSequence);
 
 #endif

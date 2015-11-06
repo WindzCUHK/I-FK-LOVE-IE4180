@@ -3,23 +3,22 @@
 using namespace std;
 
 Mode mode;
-Protocol protocol;
-int displayInterval;
-int packageSize;
-char* rhostname;
-int rPort;
-int sBufferSize;
-int txRate;
-int packageNummber;
-char* lhostname;
-int lPort;
-int rBufferSize;
+Protocol protocol = UDP;
+int displayInterval = 500;
+int packageSize = 1000;
+char* rhostname = "127.0.0.1";
+int rPort = 4180;
+int sBufferSize = 0;
+int txRate = 1000;
+int packageNummber = 0;
+char* lhostname = NULL;
+int lPort = 4180;
+int rBufferSize = 0;
 
 // mutex
 mutex g_display_mutex;
 
-mutex m;
-unique_lock<mutex> statistics_display_lock(m, defer_lock);
+mutex statistics_display_m;
 
 void clientHandler(int socket, struct sockaddr_in clientAddress) {
 
@@ -47,7 +46,7 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 	Mode mode;
 	Protocol protocol;
 	parseHello(&hello, &mode, &protocol);
-
+	
 	// if UDP, replace the tcp socket
 	if (protocol == UDP) {
 		if (close(socket) == -1) {
@@ -55,20 +54,44 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 			exit(1);
 		}
 		// open UDP socket
-		if (mode == RECV) {
+		// server recv on RECV & RESPONSE, send on SEND
+		if (mode != SEND) {
 			socket = getListenSocket(NULL, lPort, UDP, &clientAddress);
+			if (socket == -1) {
+				cout << "UDP already bind()" << endl;
+				cout << "--- thread end " << this_thread::get_id() << endl;
+				return;
+			}
 		} else {
 			socket = getConnectSocket(rhostname, hello.clientUdpListenPort, UDP, &clientAddress);
 		}
-		// set buffer size
 	}
+
+	// set buffer size
+	if (hello.bufferSize != 0) {
+		if (mode == SEND) {
+			cout << "SEND buffer is set" << endl;
+			if (setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char *) &(hello.bufferSize), sizeof(unsigned int)) == -1) {
+				perror("setsockopt(SO_SNDBUF)");
+				exit(1);
+			}
+		} else {
+			cout << "RECV buffer is set" << endl;
+			if (setsockopt(socket, SOL_SOCKET, SO_RCVBUF, (const char *) &(hello.bufferSize), sizeof(unsigned int)) == -1) {
+				perror("setsockopt(SO_RCVBUF)");
+				exit(1);
+			}
+		}
+	}
+
 
 	// react to client parameters
 	Statistics stat;
+	initStat(&stat);
 	switch (mode) {
 		case RECV:
 			cout << "server in RECV mode" << endl;
-			myRecvLoop(false, &stat, socket, (struct sockaddr *) &clientAddress, (protocol == UDP), hello.packageSize);
+			myRecvLoop(false, &stat, socket, (struct sockaddr *) &clientAddress, (protocol == UDP), hello.packageSize, hello.packageNummber);
 			break;
 		case SEND:
 			cout << "server in SEND mode" << endl;
@@ -118,6 +141,12 @@ void myAccept(int listenSocket) {
 }
 
 int main(int argc, char *argv[]) {
+
+	#ifdef WIN32
+		puts("hi9 window here");
+	#else
+		puts("hello linux");
+	#endif
 
 	getArguments(argc, argv);
 	

@@ -155,6 +155,16 @@ void getArguments(int argc, char *argv[]) {
 	}
 }
 
+void initStat(Statistics *stat) {
+	stat->isEnded = false;
+	stat->isSessionStarted = false;
+
+	stat->byteOnTraffic = 0L;
+	stat->currentSequence = 0;
+	stat->lostCount = 0;
+	stat->jitter = 0.0;
+}
+
 void printStat(Statistics *stat, Mode mode, unsigned int packageSize) {
 
 	static double rateUnitConstant = 1000.0 / (1024.0 * 1024.0); // byte per ms => Mb per s
