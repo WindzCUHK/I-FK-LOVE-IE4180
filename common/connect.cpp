@@ -46,6 +46,8 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 	// handle host for address
 	if (host != NULL) {
 		if (inet_pton(AF_INET, host, &(listenAddress->sin_addr)) != 1) myDied("inet_pton()");
+	} else {
+		listenAddress->sin_addr.s_addr = INADDR_ANY;
 	}
 
 	// create socket
@@ -55,14 +57,22 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 
 	// set recv and send buffer size
 	if (mode == RECV && rBufferSize > 0) {
+		cout << "RECV buffer is set" << endl;
 		if (setsockopt(listenSocket, SOL_SOCKET, SO_RCVBUF, (const char *) &rBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_RCVBUF)");
 	}
 	if (mode == SEND && sBufferSize > 0) {
+		cout << "SEND buffer is set" << endl;
 		if (setsockopt(listenSocket, SOL_SOCKET, SO_SNDBUF, (const char *) &sBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_SNDBUF)");
 	}
 
 	// bind
-	if (bind(listenSocket, (struct sockaddr *) listenAddress, sizeof(*listenAddress)) == -1) myDied("bind()");
+	if (bind(listenSocket, (struct sockaddr *) listenAddress, sizeof(*listenAddress)) == -1) {
+		if (protocol != UDP) myDied("bind()");
+		else {
+			// there is other thread to handle it
+			return -1;
+		}
+	}
 
 	// end for UDP
 	if (protocol == UDP) return listenSocket;
