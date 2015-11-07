@@ -23,7 +23,13 @@ void printAddress(struct sockaddr *address) {
 
 	cout << ip << ":" << port << endl;
 }
-
+void debugStat(Statistics *stat) {
+	cout << "=== debugStat ===" << endl;
+	cout << "byteOnTraffic" << ": " << stat->byteOnTraffic << endl;
+	cout << "currentSequence" << ": " << stat->currentSequence << endl;
+	cout << "lostCount" << ": " << stat->lostCount << endl;
+	cout << "=== ending ===" << endl;
+}
 
 void strToLower(char *str) {
 	for (unsigned int i = 0; i < strlen(str); i++) {

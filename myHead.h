@@ -89,6 +89,7 @@ extern int rBufferSize;		// -rbufsize -1
 extern std::mutex statistics_display_m;
 
 // util functions
+void debugStat(Statistics *stat);
 void getArguments(int argc, char *argv[]);
 void printBuffer(char *buf, int bSize);
 void printAddress(struct sockaddr *address);

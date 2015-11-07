@@ -84,6 +84,7 @@ void mySendLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *ad
 			}
 			stat->byteOnTraffic = sentBytes;
 			stat->currentSequence = currentSequence;
+			debugStat(stat);
 			if (isClient) statistics_display_m.unlock();
 
 		} else {

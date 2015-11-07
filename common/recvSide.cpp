@@ -94,6 +94,7 @@ void myRecvLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *ad
 			stat->currentSequence = currentSequence;
 			stat->lostCount = lostCount;
 			stat->jitter = jitter;
+			debugStat(stat);
 			if (isClient) statistics_display_m.unlock();
 			// cout << "myRecvLoop 6" << endl;
 			
