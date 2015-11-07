@@ -16,12 +16,18 @@
 
 // socket libraries
 #include <errno.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/select.h>
-#include <unistd.h>
+#ifdef WIN32
+	#include <winsock2.h>
+	#include <ws2tcpip.h>
+	#pragma comment(lib,"ws2_32.lib") 
+#else
+	#include <arpa/inet.h>
+	#include <netinet/in.h>
+	#include <sys/socket.h>
+	#include <sys/select.h>
+	#include <unistd.h>
+#endif
 
 // data types
 typedef enum {SEND, RECV, HOST, RESPONSE} Mode;
@@ -115,3 +121,8 @@ void myServerRR(int socket, struct sockaddr *addr, bool isUDP, int packageSize);
 void myClientRR(Statistics *stat, ResponseStat *rStat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, unsigned int maxPackageOnTraffic);
 
 #endif
+
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+

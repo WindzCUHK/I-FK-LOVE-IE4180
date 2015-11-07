@@ -16,9 +16,19 @@ int lPort = 4180;
 int rBufferSize = 0;
 
 // mutex
-mutex g_display_mutex;
-
+// mutex g_display_mutex;
 mutex statistics_display_m;
+
+#ifdef WIN32
+void initWinsock(WSADATA *ptr_wsa) {
+	std::cout << "\nInitialising Winsock...\n";
+	if (WSAStartup(MAKEWORD(2, 2), ptr_wsa) != 0) {
+		printf("Init Winsock failed. Error Code : %d", WSAGetLastError());
+		exit(1);
+	}
+	std::cout << "Winsock Initialised.\n";
+}
+#endif
 
 void clientHandler(int socket, struct sockaddr_in clientAddress) {
 
@@ -29,11 +39,11 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 	}
 
 	// server debug print
-	g_display_mutex.lock();
+	// g_display_mutex.lock();
 	cout << "--- thread start " << this_thread::get_id() << endl;
 	cout << "client IP: " << clientIP << endl;
 	cout << "client port: " << clientPort << endl;
-	g_display_mutex.unlock();
+	// g_display_mutex.unlock();
 
 	// wait for hello package
 	HelloPackage hello;
@@ -53,7 +63,11 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 	
 	// if UDP, replace the tcp socket
 	if (protocol == UDP) {
+#ifdef WIN32
+		if (closesocket(socket) == -1) {
+#else
 		if (close(socket) == -1) {
+#endif
 			perror("TCP socket close, exiting...");
 			exit(1);
 		}
@@ -79,7 +93,11 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 			}
 
 			int responseSocket = getConnectSocket(rhostname, hello.clientUdpListenPort, UDP, &clientAddress);
+#ifdef WIN32
+			if (closesocket(responseSocket) == -1) {
+#else
 			if (close(responseSocket) == -1) {
+#endif
 				perror("close(), exiting...");
 				exit(1);
 			}
@@ -136,7 +154,11 @@ void clientHandler(int socket, struct sockaddr_in clientAddress) {
 	if (mode != RESPONSE) printStat(&stat, NULL, mode, hello.packageSize);
 
 	// close socket
+#ifdef WIN32
+	if (closesocket(socket) == -1) {
+#else
 	if (close(socket) == -1) {
+#endif
 		perror("close(), exiting...");
 		exit(1);
 	}
@@ -177,6 +199,11 @@ int main(int argc, char *argv[]) {
 	#endif
 
 	getArguments(argc, argv);
+
+#ifdef WIN32
+	WSADATA wsa;
+	initWinsock(&wsa);
+#endif
 	
 	struct sockaddr_in listenAddress;
 	int listenSocket = getListenSocket(NULL, lPort, TCP, &listenAddress);

@@ -17,6 +17,17 @@ int rBufferSize = 0;
 
 mutex statistics_display_m;
 
+#ifdef WIN32
+void initWinsock(WSADATA *ptr_wsa) {
+	std::cout << "\nInitialising Winsock...\n";
+	if (WSAStartup(MAKEWORD(2, 2), ptr_wsa) != 0) {
+		printf("Init Winsock failed. Error Code : %d", WSAGetLastError());
+		exit(1);
+	}
+	std::cout << "Winsock Initialised.\n";
+}
+#endif
+
 void displayStatistics(Statistics *stat, ResponseStat *rStat, Mode mode, int refresh_interval, unsigned int packageSize) {
 
 	chrono::milliseconds refresh_interval_as_ms = chrono::milliseconds(refresh_interval);
@@ -50,6 +61,11 @@ int main(int argc, char *argv[]) {
 
 	getArguments(argc, argv);
 
+#ifdef WIN32
+	WSADATA wsa;
+	initWinsock(&wsa);
+#endif
+
 	// handle -host mode
 	if (mode == HOST) {
 		return 0;
@@ -68,7 +84,11 @@ int main(int argc, char *argv[]) {
 	// if UDP, replace the tcp socket
 	if (protocol == UDP) {
 		// close TCP
+#ifdef WIN32
+		if (closesocket(serverSocket) == -1) {
+#else
 		if (close(serverSocket) == -1) {
+#endif
 			perror("TCP socket close, exiting...");
 			exit(1);
 		}
@@ -126,7 +146,11 @@ int main(int argc, char *argv[]) {
 	th.join();
 
 	cout << "Client done! Tutor, I love u~~" << endl;
+#ifdef WIN32
+	if (closesocket(serverSocket) == -1) {
+#else
 	if (close(serverSocket) == -1) {
+#endif
 		perror("close(), exiting...");
 		exit(1);
 	}
