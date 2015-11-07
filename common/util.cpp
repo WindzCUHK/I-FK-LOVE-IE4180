@@ -185,10 +185,8 @@ void printStat(Statistics *stat, ResponseStat *rStat, Mode mode, unsigned int pa
 
 	static double rateUnitConstant = 1000.0 / (1024.0 * 1024.0); // byte per ms => Mb per s
 	// static char *sendOutputFormat = "Elapsed [%lu ms] Rate [%.9f Mbps]";
-
 	// static char *recvOutputFormat1 = "Elapsed [%lu ms] Pkts [%u] Lost [%u, %.2f%%] ";
 	// static char *recvOutputFormat2 = "Rate [%.9f Mbps] Jitter [%.2f ms]";
-
 	// static char *responseOutputFormat = "Pkts [%u] Max [%lu ms] Min [%lu ms] Mean [%.2f ms] Jitter [%.2f ms]";
 	// why separate? because it crash in windows
 
@@ -216,20 +214,20 @@ void printStat(Statistics *stat, ResponseStat *rStat, Mode mode, unsigned int pa
 			lostPercentage = 100.0 * ((double)stat->lostCount) / ((double)(stat->currentSequence));
 			cout << "Elapsed [" << elapsedTimeInLong << " ms]";
 			cout << " Pkts [" << packageArrived << "]";
-			cout << " Lost [" << stat->lostCount << "," << lostPercentage << "%%]";
-			cout << " Rate [" << rate << " Mbps ";
-			cout << " Jitter [" << stat->jitter << " ms]";
+			cout << " Lost [" << stat->lostCount << ", " << fixed << setprecision(2) << lostPercentage << "%]";
+			cout << " Rate [" << fixed << setprecision(9) << rate << " Mbps]";
+			cout << " Jitter [" << fixed << setprecision(2) << stat->jitter << " ms]";
 			break;
 		case SEND:
 			cout << "Elapsed [" << elapsedTimeInLong << " ms]";
-			cout << " Rate [" << rate << " Mbps]";
+			cout << " Rate [" << fixed << setprecision(9) << rate << " Mbps]";
 			break;
 		case RESPONSE:
 			cout << "Pkts" << " [" << rStat->packageGot << "]";
 			cout << " Max" << " [" << rStat->maxTime << " ms]";
 			cout << " Min" << " [" << rStat->minTime << " ms]";
-			cout << " Mean" << " [" << rStat->meanTime << " ms]";
-			cout << " Jitter" << " [" << rStat->jitter << " ms]";
+			cout << " Mean" << " [" << fixed << setprecision(3) << rStat->meanTime << " ms]";
+			cout << " Jitter" << " [" << fixed << setprecision(3) << rStat->jitter << " ms]";
 			break;
 		default:
 			puts("on9 mode: no stat");

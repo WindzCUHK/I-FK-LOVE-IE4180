@@ -7,6 +7,7 @@
 #include <cstring>
 #include <cctype>
 #include <iostream>
+#include <iomanip>
 #include <map>
 
 // thread libraries
