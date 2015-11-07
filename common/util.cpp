@@ -178,17 +178,17 @@ void initResponseStat(ResponseStat *stat) {
 void printStat(Statistics *stat, ResponseStat *rStat, Mode mode, unsigned int packageSize) {
 
 	static double rateUnitConstant = 1000.0 / (1024.0 * 1024.0); // byte per ms => Mb per s
-	static char *sendOutputFormat = "Elapsed [%ld ms] Rate [%.9lf Mbps]";
-	static char *recvOutputFormat1 = "Elapsed [%ld ms] Pkts [%ld] Lost [%ld, %.2lf%%] ";
-	static char *recvOutputFormat2 = "Rate [%.9lf Mbps] Jitter [%.2lf ms]";
-	static char *responseOutputFormat = "Pkts [%d] Max [%lld ms] Min [%lld ms] Mean [%.2lf ms] Jitter [%.2lf ms]";
+	static char *sendOutputFormat = "Elapsed [%lu ms] Rate [%.9f Mbps]";
+	static char *recvOutputFormat1 = "Elapsed [%lu ms] Pkts [%u] Lost [%u, %.2f%%] ";
+	static char *recvOutputFormat2 = "Rate [%.9f Mbps] Jitter [%.2f ms]";
+	static char *responseOutputFormat = "Pkts [%u] Max [%lu ms] Min [%lu ms] Mean [%.2f ms] Jitter [%.2f ms]";
 	// why separate? because it crash in windows
 
 	// variables
 	chrono::system_clock::duration elapsedTime;
 	unsigned long long elapsedTimeInLong;
 	double lostPercentage, rate;
-	unsigned long long packageArrived;
+	unsigned int packageArrived;
 
 	if (mode != RESPONSE) {
 		// some calculation

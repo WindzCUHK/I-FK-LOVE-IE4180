@@ -99,7 +99,7 @@ void myClientRR(Statistics *stat, ResponseStat *rStat, int socket, struct sockad
 		// insert the sequence number in the timeStore
 		rStat->timeStore[currentSequence] = chrono::system_clock::now();
 
-		std::this_thread::sleep_for(chrono::milliseconds(500));
+		// std::this_thread::sleep_for(chrono::milliseconds(500));
 
 	} while (true);
 
