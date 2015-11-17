@@ -4,6 +4,58 @@
 		"selected_items":
 		[
 			[
+				"resp",
+				"responseAddress"
+			],
+			[
+				"pa",
+				"packageSize"
+			],
+			[
+				"tim",
+				"time_since_epoch"
+			],
+			[
+				"get",
+				"getSequence"
+			],
+			[
+				"mys",
+				"myServerRR	(responsePair.cpp)"
+			],
+			[
+				"e",
+				"erase"
+			],
+			[
+				"timeD",
+				"timeDiffInLong"
+			],
+			[
+				"update",
+				"updateResponseStat"
+			],
+			[
+				"max",
+				"maxPackageOnTraffic"
+			],
+			[
+				"ser",
+				"serverSocket"
+			],
+			[
+				"init",
+				"initStat	(myHead.h)"
+			],
+			[
+				"los",
+				"lostCount"
+			],
+			[
+				"by",
+				"byteOnTraffic"
+			],
+			[
 				"por",
 				"protocol"
 			],
@@ -70,10 +122,6 @@
 			[
 				"tmp",
 				"tmpString"
-			],
-			[
-				"get",
-				"getElementById"
 			],
 			[
 				"execorder",
@@ -344,10 +392,6 @@
 				"inputValues"
 			],
 			[
-				"max",
-				"max-width"
-			],
-			[
 				"handl",
 				"handlInst"
 			],
@@ -394,35 +438,22 @@
 			[
 				"tex",
 				"textBox"
-			],
-			[
-				"e",
-				"ethis	<?php echo $this->… ?>"
 			]
 		]
 	},
 	"buffers":
 	[
-		{
-			"file": "server.cpp",
-			"settings":
-			{
-				"buffer_size": 3097,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
-	"build_system_choices":
-	[
-	],
-	"build_varint": "",
 	"command_palette":
 	{
-		"height": 104.0,
-		"last_filter": "",
+		"height": 400.0,
 		"selected_items":
 		[
+			[
+				"ss c",
+				"Set Syntax: C++"
+			],
 			[
 				"ss sql",
 				"Set Syntax: SQL"
@@ -488,15 +519,11 @@
 				"Snippet: package"
 			]
 		],
-		"width": 408.0
+		"width": 601.0
 	},
 	"console":
 	{
-		"height": 153.0,
-		"history":
-		[
-			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
-		]
+		"height": 153.0
 	},
 	"distraction_free":
 	{
@@ -507,12 +534,19 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj2"
-	],
 	"file_history":
 	[
+		"/Users/windz/Dropbox/Share Folders/Share Folder - Alvin/IERG4180/proj1/final/Win32Project1/Source.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/server.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/client.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/common/recvSide.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/common/sendSide.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/common/responsePair.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/myHead.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/common/connect.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/common/util.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/linux.sh",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/common/package.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/myHead.h",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/createRun.sh",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/common/sendSide.cpp",
@@ -530,8 +564,6 @@
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/main.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/connect.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/utilFunctions.cpp",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/linux.sh",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/myHead.h",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/connect.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/main.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/temp.cpp",
@@ -631,16 +663,7 @@
 		"/C/Users/windz.fan/Downloads/wget.js",
 		"/C/Users/windz.fan/Downloads/out.txt",
 		"/C/Users/windz.fan/workspace/GoFixIn_R3-05_428_TOra/src/com/gotrade/fixin/message/fix/field/MsgType.java",
-		"/C/Users/windz.fan/Desktop/net.js",
-		"/C/Users/windz.fan/Downloads/IERG4180/MyTest/Win32Project1/Source.cpp",
-		"/C/Users/windz.fan/Desktop/Source.cpp",
-		"/C/Users/windz.fan/Desktop/sample.c",
-		"/C/Users/windz.fan/Downloads/IERG4180/MyTest/Win32Project1/sample.c",
-		"/C/Users/windz.fan/Downloads/IERG4180/MyTest/Win32Project1/Server.cpp",
-		"/C/Users/windz.fan/Downloads/ms737524(v=vs.85).aspx",
-		"/C/Users/windz.fan/Downloads/IERG4180/MyTest/temp.c",
-		"/C/Users/windz.fan/Desktop/tableDiff/main.js",
-		"/C/Users/windz.fan/Desktop/tableDiff/theme.css"
+		"/C/Users/windz.fan/Desktop/net.js"
 	],
 	"find":
 	{
@@ -648,7 +671,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 92.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"",
@@ -658,9 +681,28 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"wsa",
+			"initWinsock",
+			"cout <<",
+			"sin_addr",
+			"si_me",
+			"]\"",
+			"cout",
+			"cout <<",
+			"print",
+			"myRecv(",
+			"myRecv",
+			"timeStor",
+			"getSe	",
+			"sin_port",
+			"port",
+			"updateResponseStat",
+			"myRecv",
+			"Statistics",
+			"HelloPackage",
 			".lock()",
 			"displayStatistics",
 			".lock()",
@@ -769,26 +811,7 @@
 			"setCancelRejectOrderID",
 			"clientDAO",
 			"otherDAO",
-			"successUpdatedDB",
-			"throw",
-			"throw\\",
-			"Exception",
-			"throw",
-			"exception",
-			"8=FIX.4.2 | 9=199 | 35=9 | 34=42 | 49=GFEQ | 50=GFEQ | 52=20151026-03:17:22.955 | 56=BLPEQT | 57=9346712 | 11=1445826381948 | 39=6 | 41=1445826375081 | 58=Reject for expire Reject for expire | 102=0 | 109=GFAM(HK) | 434=1 | 5555=Reject for expire | 10=163 |",
-			"setOrderID",
-			"ecRptBean should not be null in normal c",
-			"order",
-			"anning unsent expired GT or",
-			"setOrderIDExecIDForOrderBean",
-			"setOrderID",
-			"orderID\norderID",
-			"orderID",
-			"GT",
-			"setClOrderIDForOrderBean",
-			"prevNonRejectedTransDetailBean",
-			"setOrigClOrderID",
-			"getOrigClOrderID"
+			"successUpdatedDB"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -796,6 +819,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"std::cout",
 			";\\n",
 			"",
 			" \\n",
@@ -922,8 +946,7 @@
 			"\\1,\\n",
 			"?, ",
 			" ",
-			"\\1 = \\2",
-			"EXEC_HANDL_INST, "
+			"\\1 = \\2"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -934,38 +957,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "server.cpp",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 3097,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1008,17 +1001,14 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/User/Node.sublime-build",
-	"project": "sublime.sublime-project",
 	"replace":
 	{
-		"height": 48.0
+		"height": 72.0
 	},
 	"save_all_on_build": true,
 	"select_file":
 	{
 		"height": 0.0,
-		"last_filter": "",
 		"selected_items":
 		[
 		],
@@ -1027,7 +1017,6 @@
 	"select_project":
 	{
 		"height": 500.0,
-		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -1037,26 +1026,10 @@
 		],
 		"width": 380.0
 	},
-	"select_symbol":
-	{
-		"height": 0.0,
-		"last_filter": "",
-		"selected_items":
-		[
-		],
-		"width": 0.0
-	},
-	"selected_group": 0,
-	"settings":
-	{
-	},
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 227.0,
-	"status_bar_visible": true,
-	"template_settings":
-	{
-	}
+	"status_bar_visible": true
 }

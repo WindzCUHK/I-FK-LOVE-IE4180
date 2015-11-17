@@ -7,6 +7,8 @@
 #include <cstring>
 #include <cctype>
 #include <iostream>
+#include <iomanip>
+#include <map>
 
 // thread libraries
 #include <thread>
@@ -15,30 +17,36 @@
 
 // socket libraries
 #include <errno.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/select.h>
-#include <unistd.h>
+#ifdef WIN32
+	#include <winsock2.h>
+	#include <ws2tcpip.h>
+	#pragma comment(lib,"ws2_32.lib") 
+#else
+	#include <arpa/inet.h>
+	#include <netinet/in.h>
+	#include <sys/socket.h>
+	#include <sys/select.h>
+	#include <unistd.h>
+#endif
 
 // data types
 typedef enum {SEND, RECV, HOST, RESPONSE} Mode;
 typedef enum {TCP, UDP} Protocol;
 
-typedef struct {
-	bool isEnded = false;
+typedef struct _Statistics {
+	bool isEnded;
 
-	bool isSessionStarted = false;
+	bool isSessionStarted;
 	std::chrono::system_clock::time_point startTime;
 
-	unsigned long long byteOnTraffic = 0;
-	unsigned int currentSequence = 0;
-	unsigned int lostCount = 0;
-	double jitter = 0.0;
+	unsigned long long byteOnTraffic;
+	unsigned int currentSequence;
+	unsigned int lostCount;
+	double jitter;
 } Statistics;
 
-typedef struct {
+typedef struct _HelloPackage {
 	unsigned int packageSize;
 	unsigned int packageNummber;
 	unsigned int txRate;
@@ -47,6 +55,20 @@ typedef struct {
 	unsigned char mode;
 	unsigned short clientUdpListenPort;
 } HelloPackage;
+
+typedef struct _ResponseStat {
+
+	unsigned long long maxTime;
+	unsigned long long minTime;
+	
+	double meanTime;
+	unsigned int packageGot;
+
+	std::map<unsigned int, std::chrono::system_clock::time_point> timeStore;
+
+	double jitter;
+
+} ResponseStat;
 
 // common
 extern Mode mode;			// -send, -recv, -host, -response
@@ -65,15 +87,17 @@ extern int lPort;			// -lport 4180
 extern int rBufferSize;		// -rbufsize -1
 
 // lock
-extern std::mutex m;
-extern std::unique_lock<std::mutex> statistics_display_lock;
-
+extern std::mutex statistics_display_m;
 
 // util functions
+void debugStat(Statistics *stat);
 void getArguments(int argc, char *argv[]);
 void printBuffer(char *buf, int bSize);
 void printAddress(struct sockaddr *address);
-void printStat(Statistics *stat, Mode mode, unsigned int packageSize);
+
+void initStat(Statistics *stat);
+void initResponseStat(ResponseStat *stat);
+void printStat(Statistics *stat, ResponseStat *rStat, Mode mode, unsigned int packageSize);
 
 // connect
 int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in *serverAddress);
@@ -92,6 +116,15 @@ void printHello(HelloPackage *hello);
 int mySend(bool isUDP, int socket, struct sockaddr *addr, char *package, int packageSize);
 void mySendLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, int rate, unsigned int maxSequence);
 int myRecv(bool isUDP, int socket, struct sockaddr *addr, char *package, int packageSize);
-void myRecvLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize);
+void myRecvLoop(bool isClient, Statistics *stat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, unsigned int maxSequence);
+
+// response
+void myServerRR(int socket, struct sockaddr *addr, bool isUDP, int packageSize);
+void myClientRR(Statistics *stat, ResponseStat *rStat, int socket, struct sockaddr *addr, bool isUDP, int packageSize, unsigned int maxPackageOnTraffic);
 
 #endif
+
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+

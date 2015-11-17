@@ -9,13 +9,13 @@ void printBuffer(char *buf, int bSize) {
 		if (i > 0) printf(":");
 		printf("%02X", buf[i]);
 	}
-	printf("\n\n");
+	cout << "\n\n";
 }
 void printAddress(struct sockaddr *address) {
 
 	struct sockaddr_in *addr = (struct sockaddr_in *) address;
 	char ip[INET_ADDRSTRLEN];
-	int port = addr->sin_port;
+	int port = ntohs(addr->sin_port);
 
 	if (inet_ntop(addr->sin_family, &(addr->sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
 		perror("Parse IP failed with error code, printAddress()");
@@ -23,7 +23,13 @@ void printAddress(struct sockaddr *address) {
 
 	cout << ip << ":" << port << endl;
 }
-
+void debugStat(Statistics *stat) {
+	cout << "=== debugStat ===" << endl;
+	cout << "byteOnTraffic" << ": " << stat->byteOnTraffic << endl;
+	cout << "currentSequence" << ": " << stat->currentSequence << endl;
+	cout << "lostCount" << ": " << stat->lostCount << endl;
+	cout << "=== ending ===" << endl;
+}
 
 void strToLower(char *str) {
 	for (unsigned int i = 0; i < strlen(str); i++) {
@@ -155,25 +161,49 @@ void getArguments(int argc, char *argv[]) {
 	}
 }
 
-void printStat(Statistics *stat, Mode mode, unsigned int packageSize) {
+void initStat(Statistics *stat) {
+	stat->isEnded = false;
+	stat->isSessionStarted = false;
+
+	stat->byteOnTraffic = 0L;
+	stat->currentSequence = 0;
+	stat->lostCount = 0;
+	stat->jitter = 0.0;
+}
+
+void initResponseStat(ResponseStat *stat) {
+	stat->maxTime = 0;
+	stat->minTime = (unsigned long long) -1L;
+
+	stat->meanTime = 0.0;
+	stat->packageGot = 0;
+
+	stat->jitter = 0.0;
+}
+
+void printStat(Statistics *stat, ResponseStat *rStat, Mode mode, unsigned int packageSize) {
 
 	static double rateUnitConstant = 1000.0 / (1024.0 * 1024.0); // byte per ms => Mb per s
-	static char *sendOutputFormat = "Elapsed [%ld ms] Rate [%.9lf Mbps]";
-	static char *recvOutputFormat1 = "Elapsed [%ld ms] Pkts [%ld] Lost [%ld, %.2lf%%] ";
-	static char *recvOutputFormat2 = "Rate [%.9lf Mbps] Jitter [%.2lf ms]";
+	// static char *sendOutputFormat = "Elapsed [%lu ms] Rate [%.9f Mbps]";
+	// static char *recvOutputFormat1 = "Elapsed [%lu ms] Pkts [%u] Lost [%u, %.2f%%] ";
+	// static char *recvOutputFormat2 = "Rate [%.9f Mbps] Jitter [%.2f ms]";
+	// static char *responseOutputFormat = "Pkts [%u] Max [%lu ms] Min [%lu ms] Mean [%.2f ms] Jitter [%.2f ms]";
 	// why separate? because it crash in windows
 
+	// variables
 	chrono::system_clock::duration elapsedTime;
 	unsigned long long elapsedTimeInLong;
 	double lostPercentage, rate;
-	unsigned long long packageArrived;
+	unsigned int packageArrived;
 
-	// some calculation
-	elapsedTime = chrono::system_clock::now() - stat->startTime;
-	elapsedTimeInLong = (chrono::duration_cast<std::chrono::milliseconds> (elapsedTime)).count();
-	if (elapsedTimeInLong == 0L) elapsedTimeInLong = 1;
-	packageArrived = stat->currentSequence - stat->lostCount;
-	rate = (((double)stat->byteOnTraffic) / ((double)elapsedTimeInLong)) * rateUnitConstant;
+	if (mode != RESPONSE) {
+		// some calculation
+		elapsedTime = chrono::system_clock::now() - stat->startTime;
+		elapsedTimeInLong = (chrono::duration_cast<std::chrono::milliseconds> (elapsedTime)).count();
+		if (elapsedTimeInLong == 0L) elapsedTimeInLong = 1;
+		packageArrived = stat->currentSequence - stat->lostCount;
+		rate = (((double)stat->byteOnTraffic) / ((double)elapsedTimeInLong)) * rateUnitConstant;
+	}
 
 	// std::cout << ((double)stat->byteOnTraffic) / ((double)elapsedTimeInLong) << ", " << rate << std::endl;
 	// std::cout << stat->byteOnTraffic << ", " << elapsedTimeInLong << std::endl;
@@ -182,13 +212,22 @@ void printStat(Statistics *stat, Mode mode, unsigned int packageSize) {
 	switch (mode) {
 		case RECV:
 			lostPercentage = 100.0 * ((double)stat->lostCount) / ((double)(stat->currentSequence));
-			printf(recvOutputFormat1, elapsedTimeInLong, packageArrived, stat->lostCount, lostPercentage);
-			printf(recvOutputFormat2, rate, stat->jitter);
+			cout << "Elapsed [" << elapsedTimeInLong << " ms]";
+			cout << " Pkts [" << packageArrived << "]";
+			cout << " Lost [" << stat->lostCount << ", " << fixed << setprecision(2) << lostPercentage << "%]";
+			cout << " Rate [" << fixed << setprecision(9) << rate << " Mbps]";
+			cout << " Jitter [" << fixed << setprecision(2) << stat->jitter << " ms]";
 			break;
 		case SEND:
-			printf(sendOutputFormat, elapsedTimeInLong, rate);
+			cout << "Elapsed [" << elapsedTimeInLong << " ms]";
+			cout << " Rate [" << fixed << setprecision(9) << rate << " Mbps]";
 			break;
 		case RESPONSE:
+			cout << "Pkts" << " [" << rStat->packageGot << "]";
+			cout << " Max" << " [" << rStat->maxTime << " ms]";
+			cout << " Min" << " [" << rStat->minTime << " ms]";
+			cout << " Mean" << " [" << fixed << setprecision(3) << rStat->meanTime << " ms]";
+			cout << " Jitter" << " [" << fixed << setprecision(3) << rStat->jitter << " ms]";
 			break;
 		default:
 			puts("on9 mode: no stat");
