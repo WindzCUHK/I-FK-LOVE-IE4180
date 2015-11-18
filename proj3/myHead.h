@@ -25,10 +25,10 @@
 // socket libraries
 #ifdef WIN32
 	#define NOMINMAX
+	#define _CRT_SECURE_NO_WARNINGS
 	#include <winsock2.h>
 	#include <ws2tcpip.h>
 	#pragma comment(lib,"ws2_32.lib")
-	_CRT_SECURE_NO_WARNINGS
 #else
 	#include <arpa/inet.h>
 	#include <netinet/in.h>
