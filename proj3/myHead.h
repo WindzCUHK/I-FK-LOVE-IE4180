@@ -36,6 +36,9 @@
 	#include <unistd.h>
 #endif
 
+// constants
+#define BUFFER_SIZE 4096
+
 // data type
 typedef enum {TCP, UDP} Protocol;
 typedef struct _ConnectInfo {

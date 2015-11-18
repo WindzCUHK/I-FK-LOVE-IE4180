@@ -115,8 +115,8 @@ bool createAndSendResponse(int socket, std::string const &filePath, std::string 
 	// open file
 	FILE *file;
 	file = fopen(path.c_str(), "rb");
-	size_t fileBufferSize = 4096, readBytes;
-	char fileBuffer[fileBufferSize];
+	size_t fileBufferSize = BUFFER_SIZE, readBytes;
+	char fileBuffer[BUFFER_SIZE];
 
 	// handle and send file
 	std::string responseHeader = httpVersion;

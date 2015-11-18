@@ -32,11 +32,6 @@ bool mySocketClose(int socket) {
 
 void httpHandler(int socket, struct sockaddr_in address) {
 
-	// debug print
-	int printBufferSize = 255;
-	char printBuffer[printBufferSize + 1];
-	memset(printBuffer, '\0', printBufferSize + 1);
-
 	// print client IP:port
 	char clientIP[INET_ADDRSTRLEN];
 	int clientPort = ntohs(address.sin_port);
@@ -45,12 +40,11 @@ void httpHandler(int socket, struct sockaddr_in address) {
 		mySocketClose(socket);
 		return;
 	}
-	snprintf(printBuffer, printBufferSize, "%s:%d", clientIP, clientPort);
-	threadPrint("Got client: ", printBuffer);
+	threadPrint("Got client: ", (char *) ((std::string((char *) clientIP) + ":" + to_string(clientPort)).c_str()));
 
 	// recv init
-	int bufferSize = 4096;
-	char buffer[bufferSize];
+	int bufferSize = BUFFER_SIZE;
+	char buffer[BUFFER_SIZE];
 	memset(buffer, '\0', bufferSize);
 
 	// take out the whole request header

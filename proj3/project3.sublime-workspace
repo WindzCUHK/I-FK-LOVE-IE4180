@@ -577,13 +577,14 @@
 	],
 	"file_history":
 	[
+		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/serverMain.cpp",
+		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/myhttp.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/myHead.h",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/linux.sh",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/Readme.md",
+		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/linux.sh",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/html/index.html",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/getTest.txt",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/myHTTP.cpp",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/serverMain.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/connect.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/myHead.h",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/createRun.sh",
@@ -703,8 +704,7 @@
 		"/C/Users/windz.fan/Downloads/wget.js",
 		"/C/Users/windz.fan/Downloads/out.txt",
 		"/C/Users/windz.fan/workspace/GoFixIn_R3-05_428_TOra/src/com/gotrade/fixin/message/fix/field/MsgType.java",
-		"/C/Users/windz.fan/Desktop/net.js",
-		"/C/Users/windz.fan/Downloads/IERG4180/MyTest/Win32Project1/Source.cpp"
+		"/C/Users/windz.fan/Desktop/net.js"
 	],
 	"find":
 	{
@@ -725,6 +725,17 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"c_str",
+			"imstdn",
+			"BUFFER_SIZE",
+			"#ifndef _MY_HEAD_H_\n#define _MY_HEAD_H_\n\n// common c libraries\n#include <cstdio>\n#include <cstdlib>\n#include <cstring>\n#include <cctype>\n\n// common cpp libraries\n#include <iostream>\n#include <iomanip>\n#include <queue>\n#include <vector>\n#include <algorithm>\n#include <string>\n\n// thread libraries\n#include <condition_variable>\n#include <thread>\n#include <mutex>\n#include <chrono>\n\n// socket libraries\n#include <errno.h>\n#include <sys/types.h>\n#ifdef WIN32\n	#include <winsock2.h>\n	#include <ws2tcpip.h>\n	#pragma comment(lib,\"ws2_32.lib\") \n#else\n	#include <arpa/inet.h>\n	#include <netinet/in.h>\n	#include <sys/socket.h>\n	#include <sys/select.h>\n	#include <unistd.h>\n#endif\n\n// data type\ntypedef enum {TCP, UDP} Protocol;\ntypedef struct _ConnectInfo {\n	int socket;\n	struct sockaddr_in address;\n} ConnectInfo;\n\n// connect.cpp\nvoid myDied(char *str);\nint getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in *serverAddress);\nint getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in *listenAddress);\n#ifdef WIN32\n	void initWinsock(WSADATA *ptr_wsa);\n#endif\n\n// myHTTP.cpp\nint myTcpSend(int socket, const char *buffer, int bufferSize);\nint myTcpRecv(int socket, const char *buffer, int bufferSize);\nbool myRequestRecv(int socket, char *buffer, int bufferSize);\nbool parseAndValidateRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion);\nbool createAndSendResponse(int socket, std::string const &filePath, std::string const &httpVersion);\n\n// constants\n#define BUFFER_SIZE 4096\n\n#endif\n\n#ifndef MSG_NOSIGNAL\n#define MSG_NOSIGNAL 0\n#endif\n",
+			"snprintf",
+			"fileBU",
+			"buffer",
+			"to_string",
+			"printBUf",
+			"printBuffer",
+			"/* Alvin's part */",
 			"find(",
 			"threadPrint",
 			"fileBufferSize",
@@ -841,18 +852,7 @@
 			"unSentGTExpireMsgList",
 			"essage is not sent to buys",
 			"OTFOUND_BUYSIDE Message is not sent t",
-			"update",
-			"\"Y\"",
-			"GT",
-			"169877",
-			"unSentGTExpireMsgList",
-			"Unsent Msg List",
-			"Scanning",
-			"GT",
-			"ding message to FIX sessio",
-			"pdate DB For save messa",
-			"essage is saving to reco",
-			"35=9"
+			"update"
 		],
 		"highlight": true,
 		"in_selection": false,
