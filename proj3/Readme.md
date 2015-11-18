@@ -3,6 +3,7 @@
 1. search for `/* Alvin's part */`
 2. compile in windows, test with a browser
 3. linux not tested, cant access CSE linux with a browser...
+4. remove all debug print, before the performance test
 
 #### Compile
 
