@@ -53,7 +53,7 @@ void httpHandler(int socket, struct sockaddr_in address) {
 		mySocketClose(socket);
 		return;
 	}
-	threadPrint("HTTP request: ", buffer);
+	threadPrint("HTTP request:\n", buffer);
 
 	// process request
 	const std::string requestString = buffer;

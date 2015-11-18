@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
+#include <cerrno>
 
 // common cpp libraries
 #include <iostream>
@@ -22,17 +23,17 @@
 #include <chrono>
 
 // socket libraries
-#include <errno.h>
-#include <sys/types.h>
 #ifdef WIN32
 	#include <winsock2.h>
 	#include <ws2tcpip.h>
-	#pragma comment(lib,"ws2_32.lib") 
+	#pragma comment(lib,"ws2_32.lib")
+	_CRT_SECURE_NO_WARNINGS
 #else
 	#include <arpa/inet.h>
 	#include <netinet/in.h>
 	#include <sys/socket.h>
 	#include <sys/select.h>
+	#include <sys/types.h>
 	#include <unistd.h>
 #endif
 
