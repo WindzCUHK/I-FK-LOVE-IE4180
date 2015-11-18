@@ -1,17 +1,19 @@
 #ifndef _MY_HEAD_H_
 #define _MY_HEAD_H_
 
-// common libraries
+// common c libraries
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
+
+// common cpp libraries
 #include <iostream>
 #include <iomanip>
-#include <map>
 #include <queue>
 #include <vector>
-#include <regex>
+#include <algorithm>
+#include <string>
 
 // thread libraries
 #include <condition_variable>
@@ -49,10 +51,12 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 	void initWinsock(WSADATA *ptr_wsa);
 #endif
 
-// tcpSendRecv.cpp
-int myTcpSend(int socket, char *buffer, int bufferSize);
-int myTcpRecv(int socket, char *buffer, int bufferSize);
-
+// myHTTP.cpp
+int myTcpSend(int socket, const char *buffer, int bufferSize);
+int myTcpRecv(int socket, const char *buffer, int bufferSize);
+bool myRequestRecv(int socket, char *buffer, int bufferSize);
+bool parseAndValidateRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion);
+bool createAndSendResponse(int socket, std::string const &filePath, std::string const &httpVersion);
 
 #endif
 

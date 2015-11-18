@@ -23,12 +23,13 @@ search for `/* Alvin's part */`
 
 #### Sample
 
-	./NetProbe s 4180 o > out.txt &
-	./NetProbe s 4180 p 10 > out.txt &
+	./NetProbe s 41801 o > out.txt &
+	./NetProbe s 41801 p 10 > out.txt &
 	nc 127.0.0.1 41801
 
-	GET / HTTP/1.1 
+	GET http://127.0.0.1:41801/index.html HTTP/1.1 
 	User-Agent: curl/7.26.0 
 	Host: 127.0.0.1:41800 
 	Accept: */* 
 	Proxy-Connection: Keep-Alive 
+	"GET http://abc.com/index.html HTTP/1.1\r\nUser-Agent: curl/7.26.0\r\nHost: 127.0.0.1:41800\r\nAccept: */*\r\nProxy-Connection: Keep-Alive\r\n\r\n"
