@@ -2,6 +2,14 @@
 
 using namespace std;
 
+bool hasEnding(string const &fullString, string const &ending) {
+	if (fullString.length() >= ending.length()) {
+		return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
+	} else {
+		return false;
+	}
+}
+
 int myTcpSend(int socket, const char *b, int bufferSize) {
 
 	int result;
@@ -49,7 +57,7 @@ bool myRequestRecv(int socket, char *buffer, int bufferSize) {
 		gotBytes += result;
 		if (gotBytes >= bufferSize - 1) return false;
 
-	} while (buffer[gotBytes - 4] != '\r'|| buffer[gotBytes - 3] != '\n'|| buffer[gotBytes - 2] != '\r'|| buffer[gotBytes - 1] != '\n');
+	} while (buffer[gotBytes - 4] != '\r' || buffer[gotBytes - 3] != '\n' || buffer[gotBytes - 2] != '\r' || buffer[gotBytes - 1] != '\n');
 
 	// append NULL at the end
 	buffer[gotBytes] = '\0';
@@ -131,7 +139,17 @@ bool createAndSendResponse(int socket, std::string const &filePath, std::string 
 		fseek(file, 0L, SEEK_SET);
 
 		// create and send header
-		responseHeader += " 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + to_string(contentLength) + "\r\n\r\n";
+		responseHeader += " 200 OK\r\n";
+		if (hasEnding(path, string(".html")) || hasEnding(path, string(".htm"))) {
+			responseHeader += "Content-Type: text/html\r\n";
+		} else if (hasEnding(path, string(".jpg")) || hasEnding(path, string(".jpeg"))) {
+			responseHeader += "Content-Type: image/jpeg\r\n";
+		} else if (hasEnding(path, string(".png"))) {
+			responseHeader += "Content-Type: image/png\r\n";
+		} else {
+			responseHeader += "Content-Type: application/octet-stream\r\n";
+		}
+		responseHeader += "Content-Length: " + to_string(contentLength) + "\r\n\r\n";
 		myTcpSend(socket, responseHeader.c_str(), responseHeader.length());
 
 		// read and send file content
@@ -152,6 +170,6 @@ bool createAndSendResponse(int socket, std::string const &filePath, std::string 
 
 		fclose(file);
 	}
-	
+
 	return true;
 }
