@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"def",
+				"define"
+			],
+			[
 				"fil",
 				"filePath"
 			],
@@ -473,14 +477,9 @@
 	[
 	],
 	"build_system": "",
-	"build_system_choices":
-	[
-	],
-	"build_varint": "",
 	"command_palette":
 	{
 		"height": 104.0,
-		"last_filter": "ss c++",
 		"selected_items":
 		[
 			[
@@ -556,11 +555,7 @@
 	},
 	"console":
 	{
-		"height": 153.0,
-		"history":
-		[
-			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
-		]
+		"height": 153.0
 	},
 	"distraction_free":
 	{
@@ -571,12 +566,10 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3"
-	],
 	"file_history":
 	[
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj3/myHead.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj3/Readme.md",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/serverMain.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/myhttp.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3/myHead.h",
@@ -702,9 +695,7 @@
 		"/C/Users/windz.fan/Downloads/New folder/wget.js",
 		"/C/Users/windz.fan/Downloads/New folder/out.txt",
 		"/C/Users/windz.fan/Downloads/wget.js",
-		"/C/Users/windz.fan/Downloads/out.txt",
-		"/C/Users/windz.fan/workspace/GoFixIn_R3-05_428_TOra/src/com/gotrade/fixin/message/fix/field/MsgType.java",
-		"/C/Users/windz.fan/Desktop/net.js"
+		"/C/Users/windz.fan/Downloads/out.txt"
 	],
 	"find":
 	{
@@ -712,7 +703,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 92.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"",
@@ -1042,8 +1033,6 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/User/Node.sublime-build",
-	"project": "project3.sublime-project",
 	"replace":
 	{
 		"height": 48.0
@@ -1052,7 +1041,6 @@
 	"select_file":
 	{
 		"height": 0.0,
-		"last_filter": "",
 		"selected_items":
 		[
 		],
@@ -1061,7 +1049,6 @@
 	"select_project":
 	{
 		"height": 500.0,
-		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -1071,26 +1058,10 @@
 		],
 		"width": 380.0
 	},
-	"select_symbol":
-	{
-		"height": 0.0,
-		"last_filter": "",
-		"selected_items":
-		[
-		],
-		"width": 0.0
-	},
-	"selected_group": 0,
-	"settings":
-	{
-	},
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 227.0,
-	"status_bar_visible": true,
-	"template_settings":
-	{
-	}
+	"status_bar_visible": true
 }

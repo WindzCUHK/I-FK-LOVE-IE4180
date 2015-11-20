@@ -24,10 +24,10 @@
 
 // socket libraries
 #ifdef WIN32
+	#define NOMINMAX
 	#include <winsock2.h>
 	#include <ws2tcpip.h>
 	#pragma comment(lib,"ws2_32.lib")
-	_CRT_SECURE_NO_WARNINGS
 #else
 	#include <arpa/inet.h>
 	#include <netinet/in.h>
@@ -41,7 +41,10 @@
 #define BUFFER_SIZE 4096
 
 // data type
-typedef enum {TCP, UDP} Protocol;
+enum Protocol {
+	TCP = 0,
+	UDP = 1
+};
 typedef struct _ConnectInfo {
 	int socket;
 	struct sockaddr_in address;
