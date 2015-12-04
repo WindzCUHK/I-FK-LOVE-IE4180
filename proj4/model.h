@@ -4,6 +4,7 @@
 // constants
 #define BUFFER_SIZE 4096
 #define HIDDEN_FILE '.'
+#define PATH_MAX 4096
 #ifdef WIN32
 	#define PATH_DELIMITER "\\"
 #else
@@ -27,7 +28,8 @@ typedef struct _ConnectInfo {
 
 // for files
 typedef struct _FileMeta {
-	const char *path;
+	char path[PATH_MAX];
+	short filenameLen;
 	time_t timeKey;
 	bool isDir;
 } FileMeta;
@@ -36,9 +38,10 @@ typedef std::deque<FileMeta> fileList;
 
 
 // method on model
-void initFileMeta(FileMeta *meta, char *path);
+void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen);
 bool cmpFileMeta(FileMeta &a, FileMeta &b);
 void printFileMeta(FileMeta &meta);
 int listAllFilesInDir(std::vector<FileMeta> &fileMetas, std::string &rootDirPath);
+void getFileNameFromPath(std::string &filname, char *path, short fileNameLen);
 
 #endif

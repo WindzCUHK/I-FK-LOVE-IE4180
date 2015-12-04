@@ -16,7 +16,7 @@ void getFileTime(time_t *timeKey, struct stat *fileAttributes) {
 	}
 }
 
-void initFileMeta(FileMeta *meta, const char *path) {
+void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen) {
 
 	// get file stat
 	struct stat fileAttributes;
@@ -30,7 +30,8 @@ void initFileMeta(FileMeta *meta, const char *path) {
 	bool isDir = ((S_ISDIR(fileAttributes.st_mode)) ? true : false);
 
 	// assign data
-	meta->path = path;
+	strncpy(meta->path, path, PATH_MAX);
+	meta->filenameLen = filenameLen;
 	meta->timeKey = timeKey;
 	meta->isDir = isDir;
 }
@@ -75,7 +76,8 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, std::string &rootDirPath
 
 			// create file path and check file stat
 			std::string filePath = dirPath + fileName;
-			initFileMeta(&meta, filePath.c_str());
+			std::cout << filePath << std::endl;
+			initFileMeta(&meta, filePath.c_str(), fileName.length());
 
 			// read dir or append file
 			if (meta.isDir) {
@@ -90,4 +92,9 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, std::string &rootDirPath
 	}
 
 	return EXIT_SUCCESS;
+}
+
+void getFileNameFromPath(std::string &filname, char *path, short fileNameLen) {
+	size_t pathLen = strlen(path);
+	filname = str.substr(pathLen - fileNameLen, fileNameLen);
 }

@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
 
 	listAllFilesInDir(fileMetas, monitorPath);
 
-	// print vector
+	for_each(fileMetas.begin(), fileMetas.end(), printFileMeta);
 
 	return 0;
 }
