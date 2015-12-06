@@ -1,9 +1,6 @@
 #include "myHead.h"
 
-
-// set_difference(), set_union(), set_intersection()
-
-
+// private methods
 void getFileTime(time_t *timeKey, struct stat *fileAttributes) {
 
 	time_t ctime = fileAttributes->st_ctime;
@@ -36,17 +33,46 @@ void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen) {
 	meta->isDir = isDir;
 }
 
-// bool (*cmp_fm_pt) (FileMeta &, FileMeta &) = cmpFileMeta;
-bool cmpFileMeta(FileMeta &a, FileMeta &b) {
+// function pointer: bool (*cmp_fm_pt) (FileMeta &, FileMeta &) = cmpFileMeta;
+bool cmpFileMeta(const FileMeta &a, const FileMeta &b) {
 
 	// return true, if the first argument is less than (i.e. is ordered before) the second.
 
-	if (strcmp(a.path, b.path) < 0) return true;
-	if (difftime(a.timeKey, b.timeKey) < 0) return true;
-	if (a.isDir != b.isDir) return true;
+	int pathResult = strncmp(a.path, b.path, PATH_MAX);
+	if (pathResult < 0) {
+		// std::cout << a.path << "\" < \"" << b.path << "\"" << std::endl;
+		return true;
+	}
+	if (pathResult > 0) {
+		// std::cout << a.path << "\" > \"" << b.path << "\"" << std::endl;
+		return false;
+	}
 
-	return false;
+	int timeDiff = (int) difftime(a.timeKey, b.timeKey);	// b - a
+	if (timeDiff > 0) return false;
+	if (timeDiff < 0) return true;
+
+	if (a.isDir != b.isDir) return true;
+	else return false;
 }
+bool cmpFileMetaPathOnly(const FileMeta &a, const FileMeta &b) {
+	if (strncmp(a.path, b.path, PATH_MAX) < 0) return true;
+	else return false;
+}
+
+// bool isEqualFileMeta(const FileMeta &a, const FileMeta &b) {
+// 	if (
+// 		(strcmp(a.path, b.path) == 0) &&
+// 		(difftime(a.timeKey, b.timeKey) == 0) &&
+// 		(a.isDir == b.isDir)
+// 	) return true;
+// 	else return false;
+// }
+
+// bool isEqualPath(const FileMeta &a, const FileMeta &b) {
+// 	if (strcmp(a.path, b.path) == 0) return true;
+// 	else return false;
+// }
 
 void printFileMeta(FileMeta &meta) {
 	printf("{isDir: %d, timeKey: %lld, path: \"%s\"}\n", meta.isDir, (long long) meta.timeKey, meta.path);
@@ -76,16 +102,15 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, std::string &rootDirPath
 
 			// create file path and check file stat
 			std::string filePath = dirPath + fileName;
-			std::cout << filePath << std::endl;
+			// std::cout << filePath << std::endl;
 			initFileMeta(&meta, filePath.c_str(), fileName.length());
 
-			// read dir or append file
+			// append file, if needed, read directory
+			fileMetas.push_back(meta);
 			if (meta.isDir) {
 				if (listAllFilesInDir(fileMetas, filePath) == EXIT_FAILURE) {
 					return EXIT_FAILURE;
 				}
-			} else {
-				fileMetas.push_back(meta);
 			}
 		}
 		closedir(dir);
@@ -96,5 +121,6 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, std::string &rootDirPath
 
 void getFileNameFromPath(std::string &filname, char *path, short fileNameLen) {
 	size_t pathLen = strlen(path);
+	std::string str(path);
 	filname = str.substr(pathLen - fileNameLen, fileNameLen);
 }

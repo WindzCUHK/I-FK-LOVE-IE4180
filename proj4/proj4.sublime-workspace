@@ -4,8 +4,48 @@
 		"selected_items":
 		[
 			[
+				"http",
+				"httpDelimiter"
+			],
+			[
+				"EXI",
+				"EXIT_FAILURE	(fileMeta.cpp)"
+			],
+			[
+				"update",
+				"update_list"
+			],
+			[
+				"old",
+				"old_difference"
+			],
+			[
+				"create",
+				"create_list"
+			],
+			[
+				"dele",
+				"delete_list"
+			],
+			[
+				"del",
+				"delete_list"
+			],
+			[
+				"fil",
+				"file_difference"
+			],
+			[
 				"file",
-				"fileName"
+				"file_intersection"
+			],
+			[
+				"off",
+				"offset4current"
+			],
+			[
+				"of",
+				"offset4old"
 			],
 			[
 				"cel",
@@ -186,10 +226,6 @@
 			[
 				"class",
 				"className"
-			],
-			[
-				"create",
-				"createElement"
 			],
 			[
 				"selec",
@@ -391,40 +427,11 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "fileMeta.cpp",
-			"settings":
-			{
-				"buffer_size": 2390,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "model.h",
-			"settings":
-			{
-				"buffer_size": 940,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "myHead.h",
-			"settings":
-			{
-				"buffer_size": 1631,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "",
-	"build_system_choices":
-	[
-	],
-	"build_varint": "",
 	"command_palette":
 	{
 		"height": 215.0,
-		"last_filter": "ss sh",
 		"selected_items":
 		[
 			[
@@ -476,11 +483,7 @@
 	},
 	"console":
 	{
-		"height": 153.0,
-		"history":
-		[
-			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
-		]
+		"height": 153.0
 	},
 	"distraction_free":
 	{
@@ -491,12 +494,26 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4"
-	],
 	"file_history":
 	[
+		"/Volumes/CSE/zz4180/linux.sh",
+		"/Volumes/CSE/zz4180/customHTTP.cpp",
+		"/Volumes/CSE/zz4180/myHead.h",
+		"/Volumes/CSE/zz4180/connect/connect.cpp",
+		"/Volumes/CSE/zz4180/connect/myHTTP.cpp",
+		"/Volumes/CSE/zz4180/model.h",
+		"/Volumes/CSE/zz4180/connect/myConnect.h",
+		"/Volumes/CSE/zz4180/create.sh",
+		"/Volumes/CSE/zz4180/testMain.cpp",
+		"/Volumes/CSE/zz4180/delete.sh",
+		"/Volumes/CSE/zz4180/readme.md",
+		"/Volumes/CSE/zz4180/fileMeta.cpp",
+		"/Users/windz/Downloads/cgicc-3.2.16/BUGS",
+		"/Users/windz/Downloads/cgicc-3.2.16/Makefile.in",
+		"/Volumes/CSE/zz4180/HTML_template/index.html",
+		"/Volumes/CSE/zz4180/myConnect.h",
+		"/Volumes/CSE/zz4180/postExample.txt",
+		"/Volumes/CSE/zz4180/.create.sh.swp",
 		"/C/Users/windz.fan/Desktop/stderr1.txt",
 		"/C/Users/windz.fan/Desktop/fixLogMsgFilters.md",
 		"/C/Users/windz.fan/workspace/FIX-in-dev/stdout2.txt",
@@ -606,25 +623,7 @@
 		"/C/Users/windz.fan/Desktop/all/Quiz Paper/structural_questions.md",
 		"/C/Users/windz.fan/Desktop/all/Quiz Paper/test.md",
 		"/C/Users/windz.fan/Desktop/all/www/abc.txt",
-		"/C/Users/windz.fan/Desktop/all/personal website.txt",
-		"/C/Users/windz.fan/workspace/RuleEngine/src/main/java/CLogger.scala",
-		"/C/Users/windz.fan/Desktop/hiDB/connectDB.js",
-		"/C/Users/windz.fan/Desktop/hiDB/app.js",
-		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/temp.txt",
-		"/C/Users/windz.fan/Desktop/fixLog.md",
-		"/C/Users/windz.fan/Desktop/CF merge/difference GF.md",
-		"/C/Users/windz.fan/Desktop/temp note.c",
-		"/C/Users/windz.fan/Desktop/old to new diff.md",
-		"/C/Users/windz.fan/Desktop/oracle.sql",
-		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/fix temp.c",
-		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/code merged.java",
-		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/change.java",
-		"/C/Users/windz.fan/.Nimi Places/Containers/Works/Video/Readme.txt",
-		"/C/Users/windz.fan/Desktop/MD/FIX 1.md",
-		"/C/Users/windz.fan/Desktop/MD/FIX basic.md",
-		"/C/Users/windz.fan/Desktop/FIX 1.html",
-		"/C/Users/windz.fan/Desktop/OtherConfig.md",
-		"/C/Users/windz.fan/Desktop/local DB config.c"
+		"/C/Users/windz.fan/Desktop/all/personal website.txt"
 	],
 	"find":
 	{
@@ -632,7 +631,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 92.0,
+		"height": 106.0,
 		"where_history":
 		[
 			""
@@ -643,6 +642,27 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			".addr",
+			"address ",
+			"address",
+			"ConnectInfo",
+			"HTTP/",
+			"HTTP",
+			"GET",
+			"getFileNameFromPath",
+			"EXIT_",
+			"listAllFilesInDir",
+			"EXIT_FAILURE",
+			"initFileMeta",
+			"S",
+			"torrent",
+			"coutn",
+			"printf",
+			"unchanged",
+			"strcmp",
+			";\n",
+			"isEqualFileMeta",
+			"difftime",
 			"initFileMeta",
 			"listAllFilesInDir",
 			"initFileMeta",
@@ -749,28 +769,7 @@
 			"new E",
 			"createSingleCondition",
 			"precondi",
-			"fix2bss",
-			"FIX2BSS=.+",
-			"\\s+",
-			"setting Review",
-			"to_date",
-			"(#\\w+#)",
-			"env",
-			"copy",
-			"8=FIX",
-			"copy-placeholder",
-			"copy",
-			"param_type",
-			"InvestorCode",
-			"LaskMkt",
-			"\\s+",
-			"OSDynamicConditionHCValue",
-			"FIXDynamicMathsMap",
-			"FIXDynamicValueMap",
-			"ReturnCode",
-			"ReturnCode\n",
-			"BasketID\n",
-			"\", \""
+			"fix2bss"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -893,96 +892,8 @@
 	"groups":
 	[
 		{
-			"selected": 2,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "fileMeta.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2390,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2296,
-								2217
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1008.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "model.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 940,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								852,
-								852
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "myHead.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1631,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								310,
-								310
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1025,8 +936,6 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/User/Node.sublime-build",
-	"project": "proj4.sublime-project",
 	"replace":
 	{
 		"height": 64.0
@@ -1035,7 +944,6 @@
 	"select_file":
 	{
 		"height": 0.0,
-		"last_filter": "",
 		"selected_items":
 		[
 		],
@@ -1044,7 +952,6 @@
 	"select_project":
 	{
 		"height": 500.0,
-		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -1058,26 +965,10 @@
 		],
 		"width": 380.0
 	},
-	"select_symbol":
-	{
-		"height": 0.0,
-		"last_filter": "",
-		"selected_items":
-		[
-		],
-		"width": 0.0
-	},
-	"selected_group": 0,
-	"settings":
-	{
-	},
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 263.0,
-	"status_bar_visible": true,
-	"template_settings":
-	{
-	}
+	"status_bar_visible": true
 }
