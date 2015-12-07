@@ -33,6 +33,7 @@ enum Protocol {
 void myDied(char *str);
 int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in *serverAddress);
 int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in *listenAddress);
+bool mySocketClose(int socket);
 #ifdef WIN32
 	void initWinsock(WSADATA *ptr_wsa);
 #endif

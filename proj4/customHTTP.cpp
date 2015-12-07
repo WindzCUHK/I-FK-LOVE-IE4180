@@ -70,6 +70,7 @@ bool parseAndValidateGetRequest(std::string const &request, std::string &method,
 	const std::string pathDelimiter = "/";
 	const std::string absolutePathPrefix = "http://";
 
+	// parse first line
 	size_t lastPosition = 0, newPosition = 0;
 	newPosition = request.find(constants::HTTP_line_break);
 	if (newPosition == std::string::npos) return false;

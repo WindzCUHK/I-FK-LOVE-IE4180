@@ -106,3 +106,16 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 
 	return listenSocket;
 }
+
+bool mySocketClose(int socket) {
+	#ifdef WIN32
+		if (closesocket(socket) == -1) {
+	#else
+		if (close(socket) == -1) {
+	#endif
+		perror("close(), exiting...");
+		return false;
+	}
+
+	return true;
+}
