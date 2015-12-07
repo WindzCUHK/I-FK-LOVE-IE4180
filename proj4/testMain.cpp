@@ -21,6 +21,19 @@ int main(int argc, char *argv[]) {
 	}
 	sort(oldFileMetas.begin(), oldFileMetas.end(), cmpFileMeta);
 
+	cout << "before decode: " << endl;
+	for_each(oldFileMetas.begin(), oldFileMetas.end(), printFileMeta);
+
+	string xxx = encodeFileMetas(oldFileMetas);
+	cout << "--- encode string" << endl;
+	cout <<  cgicc::form_urlencode(xxx) << endl;
+	cout << "=== encode string" << endl;
+
+	decodeFileMetas(cgicc::form_urldecode(cgicc::form_urlencode(xxx)), fileMetas);
+	cout << "after decode: " << endl;
+	for_each(fileMetas.begin(), fileMetas.end(), printFileMeta);
+
+	exit(0);
 	while (true) {
 
 		cout << "=== waiting..." << endl;
@@ -31,7 +44,9 @@ int main(int argc, char *argv[]) {
 		// initialize vectors
 		fileMetas.clear();
 		// create file list
-		listAllFilesInDir(fileMetas, monitorPath);
+		if (listAllFilesInDir(fileMetas, monitorPath) == EXIT_FAILURE) {
+			exit(EXIT_FAILURE);
+		}
 		// sort file list
 		sort(fileMetas.begin(), fileMetas.end(), cmpFileMeta);
 

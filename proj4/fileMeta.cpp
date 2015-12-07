@@ -124,3 +124,103 @@ void getFileNameFromPath(std::string &filname, char *path, short fileNameLen) {
 	std::string str(path);
 	filname = str.substr(pathLen - fileNameLen, fileNameLen);
 }
+
+// std::string encodeFileMetas(std::vector<FileMeta> v) {
+
+// 	size_t booleanSize = 1, shortSize = 2, timeSize = 8, intSize = 4;
+
+// 	char isDir[booleanSize];
+// 	char filenameLen[shortSize];
+// 	char timeKey[timeSize];
+// 	char pathLength[intSize];
+// 	memset(isDir, 0, booleanSize);
+// 	memset(filenameLen, 0, shortSize);
+// 	memset(timeKey, 0, timeSize);
+// 	memset(pathLength, 0, intSize);
+
+// 	// append file list to outStream
+// 	std::ostringstream oss;
+// 	for (std::vector<double>::size_type i = 0; i < v.size(); i++) {
+// 		memcpy(isDir, &(v[i].isDir), booleanSize);
+// 		memcpy(filenameLen, &(v[i].filenameLen), shortSize);
+// 		memcpy(timeKey, &(v[i].timeKey), timeSize);
+
+// 		int pathStrLen = strlen(v[i].path);
+// 		memcpy(pathLength, &(pathStrLen), intSize);
+
+// 		oss << isDir << filenameLen << timeKey << pathLength << v[i].path;
+// 	}
+
+// 	return oss.str();
+// }
+std::string encodeFileMetas(std::vector<FileMeta> v) {
+
+	size_t booleanSize = 1, shortSize = 2, timeSize = 8, intSize = 4;
+
+	char isDir[booleanSize];
+	char filenameLen[shortSize];
+	char timeKey[timeSize];
+	char pathLength[intSize];
+	memset(isDir, 0, booleanSize);
+	memset(filenameLen, 0, shortSize);
+	memset(timeKey, 0, timeSize);
+	memset(pathLength, 0, intSize);
+
+	// append file list to outStream
+	std::ostringstream oss;
+	for (std::vector<double>::size_type i = 0; i < v.size(); i++) {
+
+		oss.write(reinterpret_cast<const char *>(&(v[i].isDir)), booleanSize);
+		oss.write(reinterpret_cast<const char *>(&(v[i].filenameLen)), shortSize);
+		oss.write(reinterpret_cast<const char *>(&(v[i].timeKey)), timeSize);
+
+		int pathStrLen = strlen(v[i].path);
+		oss.write(reinterpret_cast<const char *>(&(pathStrLen)), intSize);
+
+		oss.write(reinterpret_cast<const char *>(v[i].path), pathStrLen);
+	}
+
+	return oss.str();
+}
+
+void decodeFileMetas(const std::string &data, std::vector<FileMeta> &v) {
+
+	using namespace std;
+
+	size_t booleanSize = 1, shortSize = 2, timeSize = 8, intSize = 4;
+
+	char isDir[booleanSize];
+	char filenameLen[shortSize];
+	char timeKey[timeSize];
+	char pathLength[intSize];
+	memset(isDir, 0, booleanSize);
+	memset(filenameLen, 0, shortSize);
+	memset(timeKey, 0, timeSize);
+	memset(pathLength, 0, intSize);
+
+	FileMeta meta;
+	std::istringstream iss(data);
+
+	iss.read(isDir, booleanSize);
+	while (!(iss.eof())) {
+		cout << "[start] EOF: "<< iss.eof() << endl;
+
+		iss.read(filenameLen, shortSize);
+		iss.read(timeKey, timeSize);
+		iss.read(pathLength, intSize);
+
+		int pathStrLen = 0;
+		memcpy(&pathStrLen, pathLength, intSize);
+
+		iss.read(meta.path, pathStrLen);
+		meta.path[pathStrLen] = '\0';
+		memcpy(&(meta.filenameLen), filenameLen, shortSize);
+		memcpy(&(meta.timeKey), timeKey, timeSize);
+		memcpy(&(meta.isDir), isDir, booleanSize);
+
+		v.push_back(meta);
+
+		// you need to read out size, for EOF to set...
+		iss.read(isDir, booleanSize);
+	}
+}

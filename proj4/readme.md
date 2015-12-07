@@ -33,11 +33,16 @@
 
 - server: lock meta data (single access)
 - client: file lock @@
+	- http://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html
+	- http://stackoverflow.com/questions/1599459/optimal-lock-file-method
 - file ID = (path, timestamp)
 - On top of HTTP...
 
 
-http://www.gnu.org/software/cgicc/doc/test_8cpp.html
-http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
-http://stackoverflow.com/questions/14551194/how-are-parameters-sent-in-an-http-post-request
-http://stackoverflow.com/questions/16958448/what-is-http-multipart-request
+###### Links
+
+1. http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+1. http://www.gnu.org/software/cgicc/doc/test_8cpp.html
+1. http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+1. http://stackoverflow.com/questions/14551194/how-are-parameters-sent-in-an-http-post-request
+1. http://stackoverflow.com/questions/16958448/what-is-http-multipart-request

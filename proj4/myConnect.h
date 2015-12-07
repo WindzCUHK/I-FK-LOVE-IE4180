@@ -15,6 +15,11 @@
 	#include <unistd.h>
 #endif
 
+namespace constants {
+	cost std::string HTTP_inline_delimiter(" ");
+	cost std::string HTTP_line_break("\r\n");
+}
+
 enum Protocol {
 	TCP = 0,
 	UDP = 1

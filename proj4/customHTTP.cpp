@@ -67,30 +67,28 @@ bool myRequestRecv(int socket, char *buffer, int bufferSize) {
 
 bool parseAndValidateGetRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion) {
 
-	const std::string requestLineDelimiter = " ";
-	const std::string httpDelimiter = "\r\n";
 	const std::string pathDelimiter = "/";
 	const std::string absolutePathPrefix = "http://";
 
 	size_t lastPosition = 0, newPosition = 0;
-	newPosition = request.find(httpDelimiter);
+	newPosition = request.find(constants::HTTP_line_break);
 	if (newPosition == std::string::npos) return false;
 	std::string requestLine = request.substr(lastPosition, newPosition);
 
 	// get request method
-	newPosition = requestLine.find(requestLineDelimiter, lastPosition);
+	newPosition = requestLine.find(constants::HTTP_inline_delimiter, lastPosition);
 	if (newPosition == std::string::npos) return false;
 	method = request.substr(lastPosition, newPosition - lastPosition);
 	if (method.compare("GET") != 0) return false;
-	lastPosition = newPosition + requestLineDelimiter.length();
+	lastPosition = newPosition + constants::HTTP_inline_delimiter.length();
 
 	// cout << method << endl;
 
 	// get request url
-	newPosition = requestLine.find(requestLineDelimiter, lastPosition);
+	newPosition = requestLine.find(constants::HTTP_inline_delimiter, lastPosition);
 	if (newPosition == std::string::npos) return false;
 	url = request.substr(lastPosition, newPosition - lastPosition);
-	lastPosition = newPosition + requestLineDelimiter.length();
+	lastPosition = newPosition + constants::HTTP_inline_delimiter.length();
 
 	// parse absolute path
 	if (url.compare(0, absolutePathPrefix.length(), absolutePathPrefix) == 0) {
@@ -174,27 +172,45 @@ bool createAndSendGetResponse(int socket, std::string const &filePath, std::stri
 	return true;
 }
 
-bool createAndSendPostResponse(int socket, std::string const &url, std::string const &httpVersion, const char *content, int contentSize) {
+bool createAndSendGetResponse(int socket, std::string const &url, std::string const &httpVersion) {
 
-	const std::string requestLineDelimiter = " ";
-	const std::string httpDelimiter = "\r\n";
+	std::string header("GET");
+	header += constants::HTTP_inline_delimiter + url;
+	header += constants::HTTP_inline_delimiter + httpVersion + constants::HTTP_line_break;
 
-	std::string header("POST");
-	header += requestLineDelimiter + url;
-	header += requestLineDelimiter + httpVersion + httpDelimiter;
-
-	std::string contentType("Content-Type: application/x-www-form-urlencoded");
-	header += contentType + httpDelimiter;
-
-	std::string contentLength("Content-Length: ");
-	header += contentLength + std::to_string(contentSize) + httpDelimiter;
+	std::string connectionKeepAlive("Connection: Keep-Alive");
+	header += connectionKeepAlive + constants::HTTP_line_break;
 
 	// header ending
-	header += httpDelimiter;
+	header += constants::HTTP_line_break;
 
 	// send header and content
-	myTcpSend(socket, header.c_str(), header.length());
-	myTcpSend(socket, content, contentSize);
+	if (myTcpSend(socket, header.c_str(), header.length()) <= 0) return false;
+
+	return true;
+}
+
+bool createAndSendPostResponse(int socket, std::string const &url, std::string const &httpVersion, const char *content, int contentSize) {
+
+	std::string header("POST");
+	header += constants::HTTP_inline_delimiter + url;
+	header += constants::HTTP_inline_delimiter + httpVersion + constants::HTTP_line_break;
+
+	std::string connectionKeepAlive("Connection: Keep-Alive");
+	header += connectionKeepAlive + constants::HTTP_line_break;
+
+	std::string contentType("Content-Type: application/x-www-form-urlencoded");
+	header += contentType + constants::HTTP_line_break;
+
+	std::string contentLength("Content-Length: ");
+	header += contentLength + std::to_string(contentSize) + constants::HTTP_line_break;
+
+	// header ending
+	header += constants::HTTP_line_break;
+
+	// send header and content
+	if (myTcpSend(socket, header.c_str(), header.length()) <= 0) return false;
+	if (myTcpSend(socket, content, contentSize) <= 0) return false;
 
 	return true;
 }

@@ -11,6 +11,7 @@
 
 // common cpp libraries
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <queue>
 #include <vector>
@@ -35,9 +36,7 @@
 // 3rd party
 #include "cgicc/CgiDefs.h"
 #include "cgicc/Cgicc.h"
-#include "cgicc/HTTPHTMLHeader.h"
-#include "cgicc/HTMLElement.h"
-#include "cgicc/HTMLClasses.h"
+#include "cgicc/CgiUtils.h"
 
 // custom header
 #include "model.h"
