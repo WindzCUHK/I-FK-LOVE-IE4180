@@ -17,7 +17,7 @@
 1. configurable sync interval (config file)
 1. restore: enter file path, select timestamp
 
-## clould server
+## cloud server
 
 - Linux only
 - maintains backup files
@@ -33,5 +33,12 @@
 
 - server: lock meta data (single access)
 - client: file lock @@
+	- http://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html
+	- http://stackoverflow.com/questions/1599459/optimal-lock-file-method
 - file ID = (path, timestamp)
 - On top of HTTP...
+
+
+###### Links
+
+1. http://stackoverflow.com/questions/154536/encode-decode-urls-in-c

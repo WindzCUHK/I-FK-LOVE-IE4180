@@ -475,11 +475,34 @@
 	},
 	"buffers":
 	[
+		{
+			"contents": "Searching 9 files for \"myRequestRecv\"\n\nC:\\Users\\windz.fan\\Downloads\\I-FK-LOVE-IE4180\\proj3\\myHead.h:\n   62  int myTcpSend(int socket, const char *buffer, int bufferSize);\n   63  int myTcpRecv(int socket, const char *buffer, int bufferSize);\n   64: bool myRequestRecv(int socket, char *buffer, int bufferSize);\n   65  bool parseAndValidateRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion);\n   66  bool createAndSendResponse(int socket, std::string const &filePath, std::string const &httpVersion);\n\nC:\\Users\\windz.fan\\Downloads\\I-FK-LOVE-IE4180\\proj3\\myHTTP.cpp:\n   43  }\n   44  \n   45: bool myRequestRecv(int socket, char *buffer, int bufferSize) {\n   46  \n   47  	int gotBytes = 0, result;\n\nC:\\Users\\windz.fan\\Downloads\\I-FK-LOVE-IE4180\\proj3\\serverMain.cpp:\n   49  \n   50  	// take out the whole request header\n   51: 	if (!myRequestRecv(socket, buffer, bufferSize)) {\n   52  		threadPrint(\"Error: \", \"recv() error OR request >= 4096 bytes\");\n   53  		mySocketClose(socket);\n\n3 matches across 3 files\n",
+			"settings":
+			{
+				"buffer_size": 1054,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "serverMain.cpp",
+			"settings":
+			{
+				"buffer_size": 4545,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
 	"command_palette":
 	{
 		"height": 104.0,
+		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -555,7 +578,11 @@
 	},
 	"console":
 	{
-		"height": 153.0
+		"height": 153.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
 	},
 	"distraction_free":
 	{
@@ -566,6 +593,10 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3"
+	],
 	"file_history":
 	[
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj3/myHead.h",
@@ -703,7 +734,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 92.0,
 		"where_history":
 		[
 			"",
@@ -716,6 +747,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"myRequestRecv",
 			"c_str",
 			"imstdn",
 			"BUFFER_SIZE",
@@ -842,8 +874,7 @@
 			"sage is saving to recovery",
 			"unSentGTExpireMsgList",
 			"essage is not sent to buys",
-			"OTFOUND_BUYSIDE Message is not sent t",
-			"update"
+			"OTFOUND_BUYSIDE Message is not sent t"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -989,8 +1020,92 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1054,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										253,
+										266
+									],
+									[
+										642,
+										655
+									],
+									[
+										877,
+										890
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								884,
+								884
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "serverMain.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4545,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1188,
+								1188
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 495.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -1033,6 +1148,8 @@
 	{
 		"height": 0.0
 	},
+	"pinned_build_system": "Packages/User/Node.sublime-build",
+	"project": "project3.sublime-project",
 	"replace":
 	{
 		"height": 48.0
@@ -1041,6 +1158,7 @@
 	"select_file":
 	{
 		"height": 0.0,
+		"last_filter": "",
 		"selected_items":
 		[
 		],
@@ -1049,6 +1167,7 @@
 	"select_project":
 	{
 		"height": 500.0,
+		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -1058,10 +1177,30 @@
 		],
 		"width": 380.0
 	},
+	"select_symbol":
+	{
+		"height": 67.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"ConnectionMgr",
+				"ConnectionMgr"
+			]
+		],
+		"width": 400.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 227.0,
-	"status_bar_visible": true
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
 }

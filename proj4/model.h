@@ -15,17 +15,6 @@ namespace constants {
 	const std::string global_pathDelimiter(PATH_DELIMITER);
 }
 
-// for connection
-enum Protocol {
-	TCP = 0,
-	UDP = 1
-};
-
-typedef struct _ConnectInfo {
-	int socket;
-	struct sockaddr_in address;
-} ConnectInfo;
-
 // for files
 typedef struct _FileMeta {
 	char path[PATH_MAX];
@@ -39,9 +28,13 @@ typedef std::deque<FileMeta> fileList;
 
 // method on model
 void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen);
-bool cmpFileMeta(FileMeta &a, FileMeta &b);
+bool cmpFileMeta(const FileMeta &a, const FileMeta &b);
+bool cmpFileMetaPathOnly(const FileMeta &a, const FileMeta &b);
 void printFileMeta(FileMeta &meta);
 int listAllFilesInDir(std::vector<FileMeta> &fileMetas, std::string &rootDirPath);
 void getFileNameFromPath(std::string &filname, char *path, short fileNameLen);
+// serialization 
+std::string encodeFileMetas(std::vector<FileMeta> v);
+void decodeFileMetas(const std::string &data, std::vector<FileMeta> &v);
 
 #endif
