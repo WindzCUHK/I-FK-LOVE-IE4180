@@ -1,6 +1,6 @@
 #include "myHead.h"
 
-mutex g_display_mutex;
+std::mutex g_display_mutex;
 
 void filesDifference(const std::vector<FileMeta> &oldFileMetas, const std::vector<FileMeta> &fileMetas, std::vector<FileMeta> &update_list, std::vector<FileMeta> &delete_list, std::vector<FileMeta> &create_list) {
 
@@ -64,22 +64,21 @@ void filesDifference(const std::vector<FileMeta> &oldFileMetas, const std::vecto
 		cmpFileMetaPathOnly
 	);
 
-
-	// cout << "1. " << "old list" << endl;
+	// std::cout << "1. " << "old list" << std::endl;
 	// for_each(oldFileMetas.begin(), oldFileMetas.end(), printFileMeta);
-	// cout << "1. " << "new list" << endl;
+	// std::cout << "1. " << "new list" << std::endl;
 	// for_each(fileMetas.begin(), fileMetas.end(), printFileMeta);
-	// cout << "2. " << "unchanged" << endl;
+	// std::cout << "2. " << "unchanged" << std::endl;
 	// for_each(file_intersection.begin(), file_intersection.end(), printFileMeta);
-	// cout << "2.1. " << "old diff" << endl;
+	// std::cout << "2.1. " << "old diff" << std::endl;
 	// for_each(old_difference.begin(), old_difference.end(), printFileMeta);
-	// cout << "2.2. " << "cur diff" << endl;
+	// std::cout << "2.2. " << "cur diff" << std::endl;
 	// for_each(current_difference.begin(), current_difference.end(), printFileMeta);
-	// cout << "3. " << "update" << endl;
+	// std::cout << "3. " << "update" << std::endl;
 	// for_each(update_list.begin(), update_list.end(), printFileMeta);
-	// cout << "4. " << "delete" << endl;
+	// std::cout << "4. " << "delete" << std::endl;
 	// for_each(delete_list.begin(), delete_list.end(), printFileMeta);
-	// cout << "5. " << "create" << endl;
+	// std::cout << "5. " << "create" << std::endl;
 	// for_each(create_list.begin(), create_list.end(), printFileMeta);
 
 	// clean up
@@ -112,6 +111,7 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		oss << "GET request sent\n";
 
 		// wait for server to response file list, and then decode + sort it
+		bodyss.clear();
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving GET /list response\n";
 			threadPrint(oss.str().c_str(), "\n");
@@ -134,45 +134,49 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		oss << "diff local and server\n";
 
 		// POST changes to server, HTTP pipeline
-		std::string &contentStringRef, httpVersionRef = contants::REQUEST_default_http_version;
+
+		std::string contentString;
+		std::string httpVersion = constants::REQUEST_default_http_version;
 		oss << "POST /delete\n";
-		contentStringRef = form_urlencode(encodeFileMetas(delete_list));
-		if (!createAndSendRequest(socket, false, constants::SERVER_delete_path, httpVersionRef, true, contentStringRef.c_str(), contentStringRef.length())) {
+		contentString = cgicc::form_urlencode(encodeFileMetas(delete_list));
+		if (!createAndSendRequest(socket, false, constants::SERVER_delete_path, httpVersion, true, contentString.c_str(), contentString.length())) {
 			oss << "Error createAndSendRequest(): sending POST /delete request\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
 		}
 		oss << "POST /create\n";
-		contentStringRef = form_urlencode(encodeFileMetas(create_list));
-		if (!createAndSendRequest(socket, false, constants::SERVER_create_path, httpVersionRef, true, contentStringRef.c_str(), contentStringRef.length())) {
+		contentString = cgicc::form_urlencode(encodeFileMetas(create_list));
+		if (!createAndSendRequest(socket, false, constants::SERVER_create_path, httpVersion, true, contentString.c_str(), contentString.length())) {
 			oss << "Error createAndSendRequest(): sending POST /create request\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
 		}
 		oss << "POST /update\n";
-		contentStringRef = form_urlencode(encodeFileMetas(update_list));
-		if (!createAndSendRequest(socket, false, constants::SERVER_udpate_path, httpVersionRef, true, contentStringRef.c_str(), contentStringRef.length())) {
+		contentString = cgicc::form_urlencode(encodeFileMetas(update_list));
+		if (!createAndSendRequest(socket, false, constants::SERVER_udpate_path, httpVersion, true, contentString.c_str(), contentString.length())) {
 			oss << "Error createAndSendRequest(): sending POST /update request\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
 		}
 
-
+		bodyss.clear();
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving POST /delete response\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
 		}
+		bodyss.clear();
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving POST /create response\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
 		}
+		bodyss.clear();
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving POST /update response\n";
 			threadPrint(oss.str().c_str(), "\n");
@@ -181,18 +185,17 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		}
 		oss << "POST response DONE\n";
 
-		// clear up vertors
+		// clear up vectors
 		localfileMetas.clear();
 		serverFileMetas.clear();
 		update_list.clear();
 		delete_list.clear();
 		create_list.clear();
 
-		// clean up streams
+		// loop ending
 		oss << "=== monitor loop end! Waiting " << refreshInterval << "ms ...\n";
 		threadPrint(oss.str().c_str(), "\n");
 		oss.clear();
-		bodyss.clear();
 
 		// sleep
 		std::this_thread::sleep_for(std::chrono::milliseconds(refreshInterval));
@@ -202,15 +205,15 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 void httpGetHandler(int socket, const std::string &path) {
 
 	// thread output stream
-	std::ostringstream oss;
-	oss << '--- httpGetHandler thread start\n';
+	std::ostringstream oss, bodyss;
+	oss << "--- httpGetHandler thread start\n";
 
 	// request buffer
 	char buffer[BUFFER_SIZE];
 	int bufferSize = BUFFER_SIZE;
 
 	// take out the whole request header
-	if (!myRequestRecv(socket, buffer, bufferSize, NULL)) {
+	if (!myRequestRecv(socket, buffer, bufferSize, bodyss)) {
 		oss << "Error: recv() error OR request >= 4096 bytes\n";
 		threadPrint(oss.str().c_str(), "\n");
 		mySocketClose(socket);
@@ -221,7 +224,6 @@ void httpGetHandler(int socket, const std::string &path) {
 	// process request
 	const std::string requestString = buffer;
 	std::string method, url, httpVersion;
-	bool isKeepAlive;
 	if (!parseAndValidateRequest(requestString, method, url, httpVersion)) {
 		oss << "Error: Unknown request header\n";
 		threadPrint(oss.str().c_str(), "\n");
@@ -231,7 +233,7 @@ void httpGetHandler(int socket, const std::string &path) {
 
 	// create response
 	oss << "Request file path: " << url << '\n';
-	if (!createAndSendResponse(socket, method, path + url, httpVersion)) {
+	if (!createAndSendResponse(true, socket, method, path + url, httpVersion, constants::EMPTY_STRING)) {
 		oss << "Error: file IO OR send()\n";
 		threadPrint(oss.str().c_str(), "\n");
 		mySocketClose(socket);
@@ -246,12 +248,12 @@ void httpGetHandler(int socket, const std::string &path) {
 	threadPrint(oss.str().c_str(), "--- httpGetHandler thread end\n\n");
 }
 
-void acceptLoop(int socket, std::string &monitorPath) {
+void acceptLoop(int socket, std::string &monitorPath, int port) {
 	int clientSocket;
 	struct sockaddr_in clientAddress;
 	socklen_t addressSize = sizeof(clientAddress);
 
-	threadPrint("Waiting connection... on port ", to_string(port).c_str());
+	threadPrint("Waiting connection... on port ", std::to_string(port).c_str());
 	while (true) {
 
 		// accept new socket
@@ -264,16 +266,15 @@ void acceptLoop(int socket, std::string &monitorPath) {
 
 		// new thread to handle the GET request
 		std::thread httpGetHandlerThread(httpGetHandler, clientSocket, std::cref(monitorPath));
+		httpGetHandlerThread.detach();
 	}
-
-	httpGetHandlerThread.join();
 }
 
 int main(int argc, char *argv[]) {
 
 	// check argument
 	if (argc < 3) {
-		cout << "Usage: monitorClient [sync folder path] [refresh interval] [server IP] [server port] [client listen port]" << endl;
+		std::cout << "Usage: monitorClient [sync folder path] [refresh interval] [server IP] [server port] [client listen port]" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -305,7 +306,7 @@ int main(int argc, char *argv[]) {
 	struct sockaddr_in listenAddress;
 	int listenSocket = getListenSocket(NULL, listenPort, protocol, &listenAddress);
 	// accept loop
-	acceptLoop(listenSocket, monitorPath);
+	acceptLoop(listenSocket, monitorPath, listenPort);
 
 	threadPrint("Client is KO ed...", "");
 	return 0;

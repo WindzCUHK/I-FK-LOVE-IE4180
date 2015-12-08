@@ -85,6 +85,8 @@ bool myHttpHeaderRecv(int socket, char *buffer, int bufferSize, int *httpPackage
 	// append NULL at the end
 	*headerEnding = '\0';
 	*httpPackageSizeGot = gotBytes;
+
+	return true;
 }
 
 bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPackageSizeGot, std::ostringstream &oss) {
@@ -94,7 +96,7 @@ bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPack
 	char *contentLengthBegin = strstr(headerBuffer, HTTP_CONTENT_HEADER);
 	if (contentLengthBegin != NULL) {
 		contentLengthBegin += strlen(HTTP_CONTENT_HEADER);
-		char *contentLengthEnd = strstr(contentLengthBegin, constant::HTTP_line_break.c_str());
+		char *contentLengthEnd = strstr(contentLengthBegin, constants::HTTP_line_break.c_str());
 		string tmpString(contentLengthBegin, contentLengthEnd - contentLengthBegin);
 		contentLength = stoi(tmpString);
 	}
@@ -104,20 +106,22 @@ bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPack
 
 		// take body from buffer
 		char *bodyStart = headerBuffer + strlen(headerBuffer) + strlen(HTTP_REQUEST_ENDING);
-		int bodyGot = httpPackageSize - (bodyStart - headerBuffer);
+		int bodyGot = httpPackageSizeGot - (bodyStart - headerBuffer);
 		oss.write(bodyStart, bodyGot);
 
 		// take body from socket
 		if (contentLength - bodyGot > 0) {
-			if (!myContentToStream(socekt, oss, contentLength - bodyGot)) {
+			if (!myContentToStream(socket, oss, contentLength - bodyGot)) {
 				perror("Error: myContentToStream() during myRequestRecv()");
 				return false;
 			}
 		}
 	}
+
+	return true;
 }
 
-bool myResponseRecv(int socket, bool *is200, std::ostringstream &oss) {
+bool myResponseRecv(int socket, std::ostringstream &oss) {
 
 	int httpPackageSizeGot;
 	char buffer[BUFFER_SIZE];
@@ -129,7 +133,11 @@ bool myResponseRecv(int socket, bool *is200, std::ostringstream &oss) {
 		return false;
 	}
 
-	if (strstr(buffer, "200"))
+	// check 200 OK
+	if (strstr(buffer, "200") != (buffer + constants::REQUEST_default_http_version.length() + constants::HTTP_inline_delimiter.length())) {
+		perror("Error: myRequestRecv() => HTTP not 200 OK");
+		return false;
+	}
 
 	// get body
 	if (!myHttpBodyRecv(socket, buffer, bufferSize, httpPackageSizeGot, oss)) {
@@ -151,7 +159,7 @@ bool myRequestRecv(int socket, char *buffer, int bufferSize, std::ostringstream 
 	}
 
 	// only GET request expected, no body part
-	if (oss == NULL) return true;
+	if (strncmp(buffer, constants::HTTP_GET.c_str(), constants::HTTP_GET.length()) == 0) return true;
 
 	// get body
 	if (!myHttpBodyRecv(socket, buffer, bufferSize, httpPackageSizeGot, oss)) {
@@ -219,7 +227,7 @@ void construtHttpResponseHeader(std::string &responseHeader, bool isOK, const st
 	}
 
 	// mark header ending
-	responseHeader += HTTP_line_break;
+	responseHeader += constants::HTTP_line_break;
 }
 
 bool getFileResponse(int socket, const std::string &filePath, const std::string &httpVersion, bool isKeepAlive) {
@@ -239,7 +247,7 @@ bool getFileResponse(int socket, const std::string &filePath, const std::string 
 	std::string responseHeader;
 	if (file == NULL) {
 		// file not exist
-		construtHttpResponseHeader(responseHeader, false, httpVersion, NULL, NULL, false);
+		construtHttpResponseHeader(responseHeader, false, httpVersion, NULL, 0L, false);
 		if (myTcpSend(socket, responseHeader.c_str(), responseHeader.length()) <= 0) return false;
 	} else {
 
@@ -287,7 +295,7 @@ bool createAndSendResponse(bool isClient, int socket, const std::string &method,
 				return true;
 			}
 			if (url.compare(0, constants::SERVER_restore_path.length(), constants::SERVER_restore_path) == 0) {
-				url = url.substr(constants::SERVER_restore_path.length());
+				std::string filePath = url.substr(constants::SERVER_restore_path.length());
 				return true;
 			}
 
@@ -298,13 +306,16 @@ bool createAndSendResponse(bool isClient, int socket, const std::string &method,
 	// POST body may also be empty
 	if (method == constants::HTTP_POST) {
 		// server part
+		return true;
 	}
+
+	return false;
 }
 
 bool createAndSendRequest(int socket, bool isGet, const std::string &url, const std::string &httpVersion, bool isKeepAlive, const char *content, int contentSize) {
 
 	// 1st request line
-	std::string header = ((isGet) ? constans::HTTP_GET : constants::HTTP_POST);
+	std::string header = ((isGet) ? constants::HTTP_GET : constants::HTTP_POST);
 	header += constants::HTTP_inline_delimiter + url;
 	header += constants::HTTP_inline_delimiter + httpVersion + constants::HTTP_line_break;
 

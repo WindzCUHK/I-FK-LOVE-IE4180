@@ -41,6 +41,12 @@
 // custom header
 #include "model.h"
 #include "myConnect.h"
+#include "myThread.h"
+
+
+namespace constants {
+	const std::string EMPTY_STRING("");
+}
 
 #endif
 

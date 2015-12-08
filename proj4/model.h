@@ -31,7 +31,7 @@ void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen);
 bool cmpFileMeta(const FileMeta &a, const FileMeta &b);
 bool cmpFileMetaPathOnly(const FileMeta &a, const FileMeta &b);
 void printFileMeta(FileMeta &meta);
-int listAllFilesInDir(std::vector<FileMeta> &fileMetas, std::string &rootDirPath);
+int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootDirPath);
 void getFileNameFromPath(std::string &filname, char *path, short fileNameLen);
 // serialization 
 std::string encodeFileMetas(std::vector<FileMeta> v);

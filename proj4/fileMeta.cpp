@@ -78,7 +78,7 @@ void printFileMeta(FileMeta &meta) {
 	printf("{isDir: %d, timeKey: %lld, path: \"%s\"}\n", meta.isDir, (long long) meta.timeKey, meta.path);
 }
 
-int listAllFilesInDir(std::vector<FileMeta> &fileMetas, std::string &rootDirPath) {
+int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootDirPath) {
 
 	// memory
 	FileMeta meta;

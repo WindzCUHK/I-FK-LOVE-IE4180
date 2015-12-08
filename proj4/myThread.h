@@ -2,9 +2,9 @@
 #define _MY_THREAD_H_
 
 // display mutex
-extern mutex g_display_mutex;
+extern std::mutex g_display_mutex;
 
-void threadPrint(char* str1, char *str2);
+void threadPrint(const char *str1, const char *str2);
 
 
 // job queue and its mutex

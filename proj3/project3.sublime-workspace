@@ -477,14 +477,9 @@
 	[
 	],
 	"build_system": "",
-	"build_system_choices":
-	[
-	],
-	"build_varint": "",
 	"command_palette":
 	{
 		"height": 104.0,
-		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -560,11 +555,7 @@
 	},
 	"console":
 	{
-		"height": 153.0,
-		"history":
-		[
-			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
-		]
+		"height": 153.0
 	},
 	"distraction_free":
 	{
@@ -575,12 +566,10 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj3"
-	],
 	"file_history":
 	[
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj3/serverMain.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj3/connect.cpp",
 		"/Users/windz/Downloads/desktop.ini",
 		"/Users/windz/Downloads/.DS_Store",
 		"/Users/windz/Downloads/.localized",
@@ -706,9 +695,7 @@
 		"/C/Users/windz.fan/workspace/GoFixIn_R3-05_428_TOra/src/com/gotrade/fixin/bean/vo/FIXExecRptBean.java",
 		"/C/Users/windz.fan/workspace/GoFixIn_R3-05_428_TOra/src/com/gotrade/fixin/message/fix/FixMsgExecutionReport.java",
 		"/C/Users/windz.fan/workspace/GoFixIn_R3-05_428_TOra/src/com/gotrade/fixin/dao/FIXExecRptDAO.java",
-		"/C/Users/windz.fan/workspace/GoFixIn_R3-05_428_TOra/src/com/gotrade/fixin/bean/ExecRptBean.java",
-		"/C/Users/windz.fan/Desktop/nodeTemplate/template.js",
-		"/C/Users/windz.fan/Downloads/New folder/wget.js"
+		"/C/Users/windz.fan/workspace/GoFixIn_R3-05_428_TOra/src/com/gotrade/fixin/bean/ExecRptBean.java"
 	],
 	"find":
 	{
@@ -729,6 +716,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"address",
+			"getConnectSocket",
+			"jqLock",
 			"c_str",
 			"imstdn",
 			"BUFFER_SIZE",
@@ -853,10 +843,7 @@
 			"\"",
 			"PTC",
 			"sage is saving to recovery",
-			"unSentGTExpireMsgList",
-			"essage is not sent to buys",
-			"OTFOUND_BUYSIDE Message is not sent t",
-			"update"
+			"unSentGTExpireMsgList"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1046,8 +1033,6 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/User/Node.sublime-build",
-	"project": "project3.sublime-project",
 	"replace":
 	{
 		"height": 48.0
@@ -1056,7 +1041,6 @@
 	"select_file":
 	{
 		"height": 0.0,
-		"last_filter": "",
 		"selected_items":
 		[
 		],
@@ -1065,44 +1049,19 @@
 	"select_project":
 	{
 		"height": 500.0,
-		"last_filter": "msg",
 		"selected_items":
 		[
 			[
-				"msg",
-				"C:\\Users\\windz.fan\\Desktop\\msgSearcher\\msgSearcher.sublime-project"
-			],
-			[
 				"",
-				"C:\\Users\\windz.fan\\.Nimi Places\\Containers\\Working Space\\FIX-IN SQL.sublime-project"
+				"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/proj4.sublime-project"
 			]
 		],
 		"width": 380.0
-	},
-	"select_symbol":
-	{
-		"height": 67.0,
-		"last_filter": "",
-		"selected_items":
-		[
-			[
-				"ConnectionMgr",
-				"ConnectionMgr"
-			]
-		],
-		"width": 400.0
-	},
-	"selected_group": 0,
-	"settings":
-	{
 	},
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 227.0,
-	"status_bar_visible": true,
-	"template_settings":
-	{
-	}
+	"status_bar_visible": true
 }

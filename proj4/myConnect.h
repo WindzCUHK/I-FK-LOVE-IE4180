@@ -63,7 +63,7 @@ int myTcpRecv(int socket, const char *buffer, int bufferSize);
 bool myResponseRecv(int socket, std::ostringstream &oss);
 bool myRequestRecv(int socket, char *buffer, int bufferSize, std::ostringstream &oss);
 bool parseAndValidateRequest(const std::string &request, std::string &method, std::string &url, std::string &httpVersion);
-bool createAndSendResponse(int socket, const std::string &method, const std::string &url, const std::string &httpVersion, const std::string &requestBody);
+bool createAndSendResponse(bool isClient, int socket, const std::string &method, const std::string &url, const std::string &httpVersion, const std::string &requestBody);
 bool createAndSendRequest(int socket, bool isGet, const std::string &url, const std::string &httpVersion, bool isKeepAlive, const char *content, int contentSize);
 
 #endif
