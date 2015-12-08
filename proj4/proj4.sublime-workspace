@@ -4,32 +4,20 @@
 		"selected_items":
 		[
 			[
-				"print",
-				"printFileMeta"
+				"clie",
+				"clientSocket"
 			],
 			[
-				"file",
-				"filenameLen"
+				"refre",
+				"refreshInterval"
 			],
 			[
-				"time",
-				"timeKey"
+				"server",
+				"serverSocket"
 			],
 			[
-				"tim",
-				"timeKey"
-			],
-			[
-				"filename",
-				"filenameLen"
-			],
-			[
-				"pathLen",
-				"pathLength"
-			],
-			[
-				"bol",
-				"booleanSize"
+				"ser",
+				"serverPort"
 			],
 			[
 				"http",
@@ -62,6 +50,10 @@
 			[
 				"fil",
 				"file_difference"
+			],
+			[
+				"file",
+				"file_intersection"
 			],
 			[
 				"off",
@@ -453,14 +445,9 @@
 	[
 	],
 	"build_system": "",
-	"build_system_choices":
-	[
-	],
-	"build_varint": "",
 	"command_palette":
 	{
 		"height": 215.0,
-		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -512,11 +499,7 @@
 	},
 	"console":
 	{
-		"height": 153.0,
-		"history":
-		[
-			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
-		]
+		"height": 153.0
 	},
 	"distraction_free":
 	{
@@ -527,26 +510,20 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4"
-	],
 	"file_history":
 	[
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/readme.md",
-		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/linux related.sh",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/tt.cpp",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/linux.sh",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/testMain.cpp",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/fileMeta.cpp",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/myHead.h",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/myConnect.h",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/customHTTP.cpp",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/model.h",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/connect.cpp",
-		"/C/Users/windz.fan/workspace/netrabbitmq/target/test-classes/rabbitmq.properties",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/cgicc/CgiUtils.cpp",
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/cgicc/CgiUtils.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/customHTTP.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/connect.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/monitorClient.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/linux.sh",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myConnect.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/threadUtil.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myThread.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/testMain.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/fileMeta.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myHead.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/model.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/readme.md",
 		"/Volumes/CSE/zz4180/linux.sh",
 		"/Volumes/CSE/zz4180/customHTTP.cpp",
 		"/Volumes/CSE/zz4180/myHead.h",
@@ -616,6 +593,7 @@
 		"/C/Users/windz.fan/Documents/fix-test.sh",
 		"/C/Users/windz.fan/Documents/test.fix.sh",
 		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/temp.scala",
+		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/linux related.sh",
 		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/oracle.sql",
 		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/template.md",
 		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/gouat2fix.c",
@@ -660,7 +638,8 @@
 		"/C/Users/windz.fan/workspace/RuleEngine/src/main/java/Core.scala",
 		"/C/Users/windz.fan/workspace/RuleEngine/target/classes/Core.scala",
 		"/C/Users/windz.fan/Desktop/linux related.sh",
-		"/C/Users/windz.fan/Downloads/updated code.txt.java"
+		"/C/Users/windz.fan/Downloads/updated code.txt.java",
+		"/C/Users/windz.fan/Desktop/all/www/ierg4210/store46-CSRF.html"
 	],
 	"find":
 	{
@@ -668,7 +647,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 106.0,
+		"height": 0.0,
 		"where_history":
 		[
 			""
@@ -679,24 +658,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"myRequestRecv",
-			"parseAndValidateGetRequest",
-			"myTcpSend",
-			"httpDelimiter",
-			"requestLineDelimiter",
-			"myRequestRecv",
-			"write",
-			"decodeFileMetas",
-			"listAllFilesInDir",
-			"initFileMeta",
-			"FileMeta",
-			" )",
-			"encode",
-			"details",
-			"encode",
-			"form_urlencode",
-			"h",
-			"g",
+			"parseAndValidateRequest",
+			"thread",
+			"createAndSendResponse",
+			"guarded_lock",
+			"lock",
+			"getListenSocket",
+			"	while (true) {\n\n		cout << \"=== waiting...\" << endl;\n		std::this_thread::sleep_for(std::chrono::milliseconds(5000));\n\n		cerr << \"--- loop start...\" << endl;\n\n		// initialize vectors\n		fileMetas.clear();\n		// create file list\n		listAllFilesInDir(fileMetas, monitorPath);\n		// sort file list\n		sort(fileMetas.begin(), fileMetas.end(), cmpFileMeta);\n\n		// cout << \"1. \" << \"old list\" << endl;\n		// for_each(oldFileMetas.begin(), oldFileMetas.end(), printFileMeta);\n		// cout << \"1. \" << \"new list\" << endl;\n		// for_each(fileMetas.begin(), fileMetas.end(), printFileMeta);\n		// exit(0);\n\n		// compare file hierarchy change\n		file_intersection.clear();\n		std::set_intersection(\n			oldFileMetas.begin(),\n			oldFileMetas.end(),\n			fileMetas.begin(),\n			fileMetas.end(),\n			std::back_inserter(file_intersection),\n			cmpFileMeta\n		);\n\n		// get deleted file list\n		old_difference.clear();\n		std::set_difference(\n			oldFileMetas.begin(),\n			oldFileMetas.end(),\n			file_intersection.begin(),\n			file_intersection.end(),\n			std::back_inserter(old_difference),\n			cmpFileMeta\n		);\n\n		// get created or changed file list\n		current_difference.clear();\n		std::set_difference(\n			fileMetas.begin(),\n			fileMetas.end(),\n			file_intersection.begin(),\n			file_intersection.end(),\n			std::back_inserter(current_difference),\n			cmpFileMeta\n		);\n\n		// get update list (path exist in both list)\n		update_list.clear();\n		std::set_intersection(\n			current_difference.begin(),\n			current_difference.end(),\n			old_difference.begin(),\n			old_difference.end(),\n			std::back_inserter(update_list),\n			cmpFileMetaPathOnly\n		);\n		delete_list.clear();\n		std::set_difference(\n			old_difference.begin(),\n			old_difference.end(),\n			update_list.begin(),\n			update_list.end(),\n			std::back_inserter(delete_list),\n			cmpFileMetaPathOnly\n		);\n		create_list.clear();\n		std::set_difference(\n			current_difference.begin(),\n			current_difference.end(),\n			update_list.begin(),\n			update_list.end(),\n			std::back_inserter(create_list),\n			cmpFileMetaPathOnly\n		);\n\n		// cout << \"2. \" << \"unchanged\" << endl;\n		// for_each(file_intersection.begin(), file_intersection.end(), printFileMeta);\n		// cout << \"2.1. \" << \"old diff\" << endl;\n		// for_each(old_difference.begin(), old_difference.end(), printFileMeta);\n		// cout << \"2.2. \" << \"cur diff\" << endl;\n		// for_each(current_difference.begin(), current_difference.end(), printFileMeta);\n		// cout << \"3. \" << \"update\" << endl;\n		// for_each(update_list.begin(), update_list.end(), printFileMeta);\n		// cout << \"4. \" << \"delete\" << endl;\n		// for_each(delete_list.begin(), delete_list.end(), printFileMeta);\n		// cout << \"5. \" << \"create\" << endl;\n		// for_each(create_list.begin(), create_list.end(), printFileMeta);\n\n		// swap current file list as old, clear the old one\n		if (old_difference.size() > 0 || current_difference.size() > 0) {\n			oldFileMetas.clear();\n			std::vector<FileMeta> &tmp = oldFileMetas;\n			oldFileMetas = fileMetas;\n			fileMetas = tmp;\n		}\n	}",
 			".addr",
 			"address ",
 			"address",
@@ -806,7 +774,18 @@
 			".+35=[A1].+\\n",
 			"^Dec \\d, 2015 .+ quickfix.mina.message.FIXMessageDecoder getMessageString\nSEVERE: Test content: ",
 			"^Dec \\d, 2015 .+ com.gotrade.fixin.bean.vo.FIXTransDetailBean setFIX_CL_ORDER_ID\nINFO: oh no i set... \\w+\\n",
-			"^Dec \\d, 2015 .+ quickfix.mina.message.FIXMessageDecoder getMessageString\nSEVERE: Test content: 8=FIX.4.29=.+35=0.+\\n"
+			"^Dec \\d, 2015 .+ quickfix.mina.message.FIXMessageDecoder getMessageString\nSEVERE: Test content: 8=FIX.4.29=.+35=0.+\\n",
+			"^Dec \\d, 2015 .+ quickfix.JdbcLog insert\nINFO: Check sql: INSERT INTO messages_log \\(time, beginstring,sendercompid,targetcompid,session_qualifier, text\\) VALUES .+\\n",
+			"^Dec \\d, 2015 .+ AM quickfix.mina.message.FIXMessageDecoder getMessageString\nSEVERE: Test content: 8=FIX.4.29=.+35=0.+\\n",
+			"^Dec \\d, 2015 .+ AM quickfix.JdbcLog insert\nINFO: Check sql: INSERT INTO messages_log \\(time, beginstring,sendercompid,targetcompid,session_qualifier, text\\) VALUES .+\\n",
+			"^Dec 2, 2015 .+ AM quickfix.JdbcLog insert\nINFO: Check sql: INSERT INTO messages_log \\(time, beginstring,sendercompid,targetcompid,session_qualifier, text\\) VALUES .+\\n",
+			"^Dec 3, 2015 .+ AM quickfix.JdbcLog insert\nINFO: Check sql: INSERT INTO event_log \\(time, beginstring,sendercompid,targetcompid,session_qualifier, text\\) VALUES \\(\\?,\\?,\\?,\\?,\\?,\\?\\)\\n",
+			"^Dec 2, 2015 .+ AM quickfix.JdbcLog insert\nINFO: Check sql: INSERT INTO event_log \\(time, beginstring,sendercompid,targetcompid,session_qualifier, text\\) VALUES \\(\\?,\\?,\\?,\\?,\\?,\\?\\)\\n",
+			"Dec 2, 2015 7:00:02 AM quickfix.JdbcLog insert\nINFO: Check sql: INSERT INTO event_log (time, beginstring,sendercompid,targetcompid,session_qualifier, text) VALUES (?,?,?,?,?,?)",
+			"INFO: Check sql: INSERT INTO event_log (time, beginstring,sendercompid,targetcompid,session_qualifier, text) VALUES (?,?,?,?,?,?)",
+			"INFO: Check sql: INSERT INTO event_log (time, beginstring,sendercompid,targetcompid,session_qualifier, text) VALUES (?,?,?,?,?,?)\\n",
+			"^.+ com.gotrade.dao.ConnectionPool createConnection\\n",
+			"INFO: Create connection elapsed time: \\d+ ms for jdbc:postgresql://127.0.0.1:5432/fix2bss_gf\\n"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -814,8 +793,6 @@
 		"regex": true,
 		"replace_history":
 		[
-			"constants::HTTP_line_break",
-			"constants::HTTP_inline_delimiter",
 			"",
 			"\\n",
 			"",
@@ -975,8 +952,6 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/User/Node.sublime-build",
-	"project": "proj4.sublime-project",
 	"replace":
 	{
 		"height": 64.0
@@ -985,7 +960,6 @@
 	"select_file":
 	{
 		"height": 0.0,
-		"last_filter": "",
 		"selected_items":
 		[
 		],
@@ -994,44 +968,23 @@
 	"select_project":
 	{
 		"height": 500.0,
-		"last_filter": "",
 		"selected_items":
 		[
 			[
-				"fix",
-				"C:\\Users\\windz.fan\\.Nimi Places\\Containers\\Working Space\\FIX-IN.sublime-project"
+				"",
+				"/Volumes/CSE/zz4180/proj4.sublime-project"
 			],
 			[
-				"",
+				"fix",
 				"C:\\Users\\windz.fan\\.Nimi Places\\Containers\\Working Space\\FIX-IN.sublime-project"
 			]
 		],
 		"width": 380.0
-	},
-	"select_symbol":
-	{
-		"height": 67.0,
-		"last_filter": "",
-		"selected_items":
-		[
-			[
-				"ConnectionMgr",
-				"ConnectionMgr"
-			]
-		],
-		"width": 400.0
-	},
-	"selected_group": 0,
-	"settings":
-	{
 	},
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 263.0,
-	"status_bar_visible": true,
-	"template_settings":
-	{
-	}
+	"status_bar_visible": true
 }

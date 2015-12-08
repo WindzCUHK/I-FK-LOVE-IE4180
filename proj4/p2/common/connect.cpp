@@ -1,16 +1,5 @@
-#include "myHead.h"
+#include "../myHead.h"
 
-
-#ifdef WIN32
-void initWinsock(WSADATA *ptr_wsa) {
-	std::cout << "\nInitialising Winsock...\n";
-	if (WSAStartup(MAKEWORD(2, 2), ptr_wsa) != 0) {
-		printf("Init Winsock failed. Error Code : %d", WSAGetLastError());
-		exit(1);
-	}
-	std::cout << "Winsock Initialised.\n";
-}
-#endif
 
 
 void myDied(char *str) {
@@ -23,7 +12,7 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 	int connectSocket;
 	memset((char *) serverAddress, 0, sizeof(*serverAddress));
 
-	// convert string IP to long
+	// handle host for address
 	if (inet_pton(AF_INET, host, &(serverAddress->sin_addr)) != 1) myDied("inet_pton()");
 
 	// address info
@@ -35,7 +24,6 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 	connectSocket = socket(AF_INET, type, 0);
 	if (connectSocket == -1) myDied("socket()");
 
-	/*
 	// set recv and send buffer size
 	if (mode != SEND && rBufferSize > 0) {
 		// std::cout << "RECV buffer is set" << endl;
@@ -45,7 +33,6 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 		// std::cout << "SEND buffer is set" << endl;
 		if (setsockopt(connectSocket, SOL_SOCKET, SO_SNDBUF, (const char *) &sBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_SNDBUF)");
 	}
-	*/
 
 	// end for UDP
 	if (protocol == UDP) return connectSocket;
@@ -65,7 +52,7 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 	listenAddress->sin_family = AF_INET;
 	listenAddress->sin_port = htons(port);
 
-	// convert string IP to long
+	// handle host for address
 	if (host != NULL) {
 		if (inet_pton(AF_INET, host, &(listenAddress->sin_addr)) != 1) myDied("inet_pton()");
 	} else {
@@ -77,7 +64,6 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 	listenSocket = socket(AF_INET, type, 0);
 	if (listenSocket == -1) myDied("socket()");
 
-	/*
 	// set recv and send buffer size
 	if (mode != SEND && rBufferSize > 0) {
 		// std::cout << "RECV buffer is set" << endl;
@@ -87,7 +73,6 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 		// std::cout << "SEND buffer is set" << endl;
 		if (setsockopt(listenSocket, SOL_SOCKET, SO_SNDBUF, (const char *) &sBufferSize, sizeof(int)) == -1) myDied("setsockopt(SO_SNDBUF)");
 	}
-	*/
 
 	// bind
 	if (bind(listenSocket, (struct sockaddr *) listenAddress, sizeof(*listenAddress)) == -1) {
@@ -105,17 +90,4 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 	if (listen(listenSocket, SOMAXCONN) == -1) myDied("listen()");
 
 	return listenSocket;
-}
-
-bool mySocketClose(int socket) {
-	#ifdef WIN32
-		if (closesocket(socket) == -1) {
-	#else
-		if (close(socket) == -1) {
-	#endif
-		perror("close(), exiting...");
-		return false;
-	}
-
-	return true;
 }

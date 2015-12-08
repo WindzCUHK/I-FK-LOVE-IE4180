@@ -1,0 +1,6 @@
+GET http://abc.com/index.html HTTP/1.1
+User-Agent: curl/7.26.0
+Host: 127.0.0.1:41800
+Accept: */*
+Proxy-Connection: Keep-Alive
+

@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	// listen to connection
+	// listent to connection
 	#ifdef WIN32
 		WSADATA wsa;
 		initWinsock(&wsa);

@@ -2,14 +2,6 @@
 
 using namespace std;
 
-bool hasEnding(string const &fullString, string const &ending) {
-	if (fullString.length() >= ending.length()) {
-		return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
-	} else {
-		return false;
-	}
-}
-
 int myTcpSend(int socket, const char *b, int bufferSize) {
 
 	int result;
@@ -57,7 +49,7 @@ bool myRequestRecv(int socket, char *buffer, int bufferSize) {
 		gotBytes += result;
 		if (gotBytes >= bufferSize - 1) return false;
 
-	} while (buffer[gotBytes - 4] != '\r' || buffer[gotBytes - 3] != '\n' || buffer[gotBytes - 2] != '\r' || buffer[gotBytes - 1] != '\n');
+	} while (buffer[gotBytes - 4] != '\r'|| buffer[gotBytes - 3] != '\n'|| buffer[gotBytes - 2] != '\r'|| buffer[gotBytes - 1] != '\n');
 
 	// append NULL at the end
 	buffer[gotBytes] = '\0';
@@ -65,31 +57,32 @@ bool myRequestRecv(int socket, char *buffer, int bufferSize) {
 	return true;
 }
 
-bool parseAndValidateGetRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion) {
+bool parseAndValidateRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion) {
 
+	const std::string requestLineDelimiter = " ";
+	const std::string httpDelimiter = "\r\n";
 	const std::string pathDelimiter = "/";
 	const std::string absolutePathPrefix = "http://";
 
-	// parse first line
 	size_t lastPosition = 0, newPosition = 0;
-	newPosition = request.find(constants::HTTP_line_break);
+	newPosition = request.find(httpDelimiter);
 	if (newPosition == std::string::npos) return false;
 	std::string requestLine = request.substr(lastPosition, newPosition);
 
 	// get request method
-	newPosition = requestLine.find(constants::HTTP_inline_delimiter, lastPosition);
+	newPosition = requestLine.find(requestLineDelimiter, lastPosition);
 	if (newPosition == std::string::npos) return false;
 	method = request.substr(lastPosition, newPosition - lastPosition);
 	if (method.compare("GET") != 0) return false;
-	lastPosition = newPosition + constants::HTTP_inline_delimiter.length();
+	lastPosition = newPosition + requestLineDelimiter.length();
 
 	// cout << method << endl;
 
 	// get request url
-	newPosition = requestLine.find(constants::HTTP_inline_delimiter, lastPosition);
+	newPosition = requestLine.find(requestLineDelimiter, lastPosition);
 	if (newPosition == std::string::npos) return false;
 	url = request.substr(lastPosition, newPosition - lastPosition);
-	lastPosition = newPosition + constants::HTTP_inline_delimiter.length();
+	lastPosition = newPosition + requestLineDelimiter.length();
 
 	// parse absolute path
 	if (url.compare(0, absolutePathPrefix.length(), absolutePathPrefix) == 0) {
@@ -108,7 +101,7 @@ bool parseAndValidateGetRequest(std::string const &request, std::string &method,
 	return true;
 }
 
-bool createAndSendGetResponse(int socket, std::string const &filePath, std::string const &httpVersion) {
+bool createAndSendResponse(int socket, std::string const &filePath, std::string const &httpVersion) {
 
 	// file path
 	std::string htmlFolderPath = "./html";
@@ -138,17 +131,7 @@ bool createAndSendGetResponse(int socket, std::string const &filePath, std::stri
 		fseek(file, 0L, SEEK_SET);
 
 		// create and send header
-		responseHeader += " 200 OK\r\n";
-		if (hasEnding(path, string(".html")) || hasEnding(path, string(".htm"))) {
-			responseHeader += "Content-Type: text/html\r\n";
-		} else if (hasEnding(path, string(".jpg")) || hasEnding(path, string(".jpeg"))) {
-			responseHeader += "Content-Type: image/jpeg\r\n";
-		} else if (hasEnding(path, string(".png"))) {
-			responseHeader += "Content-Type: image/png\r\n";
-		} else {
-			responseHeader += "Content-Type: application/octet-stream\r\n";
-		}
-		responseHeader += "Content-Length: " + to_string(contentLength) + "\r\n\r\n";
+		responseHeader += " 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + to_string(contentLength) + "\r\n\r\n";
 		myTcpSend(socket, responseHeader.c_str(), responseHeader.length());
 
 		// read and send file content
@@ -169,49 +152,6 @@ bool createAndSendGetResponse(int socket, std::string const &filePath, std::stri
 
 		fclose(file);
 	}
-
-	return true;
-}
-
-bool createAndSendGetResponse(int socket, std::string const &url, std::string const &httpVersion) {
-
-	std::string header("GET");
-	header += constants::HTTP_inline_delimiter + url;
-	header += constants::HTTP_inline_delimiter + httpVersion + constants::HTTP_line_break;
-
-	std::string connectionKeepAlive("Connection: Keep-Alive");
-	header += connectionKeepAlive + constants::HTTP_line_break;
-
-	// header ending
-	header += constants::HTTP_line_break;
-
-	// send header and content
-	if (myTcpSend(socket, header.c_str(), header.length()) <= 0) return false;
-
-	return true;
-}
-
-bool createAndSendPostResponse(int socket, std::string const &url, std::string const &httpVersion, const char *content, int contentSize) {
-
-	std::string header("POST");
-	header += constants::HTTP_inline_delimiter + url;
-	header += constants::HTTP_inline_delimiter + httpVersion + constants::HTTP_line_break;
-
-	std::string connectionKeepAlive("Connection: Keep-Alive");
-	header += connectionKeepAlive + constants::HTTP_line_break;
-
-	std::string contentType("Content-Type: application/x-www-form-urlencoded");
-	header += contentType + constants::HTTP_line_break;
-
-	std::string contentLength("Content-Length: ");
-	header += contentLength + std::to_string(contentSize) + constants::HTTP_line_break;
-
-	// header ending
-	header += constants::HTTP_line_break;
-
-	// send header and content
-	if (myTcpSend(socket, header.c_str(), header.length()) <= 0) return false;
-	if (myTcpSend(socket, content, contentSize) <= 0) return false;
-
+	
 	return true;
 }
