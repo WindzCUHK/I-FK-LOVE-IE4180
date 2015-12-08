@@ -18,8 +18,25 @@
 #define HTTP_REQUEST_ENDING "\r\n\r\n"
 #define HTTP_CONTENT_HEADER "Content-Length:"
 namespace constants {
+	const std::string HTTP_GET("GET");
+	const std::string HTTP_POST("POST");
 	const std::string HTTP_inline_delimiter(" ");
 	const std::string HTTP_line_break("\r\n");
+	const std::string HTTP_path_delimiter("/");
+	const std::string HTTP_absolute_path_prefix("http://");
+	const std::string HTTP_connection_keep_alive("Connection: Keep-Alive");
+
+	// application constant
+	// GET path
+	const std::string SERVER_list_path("/list");
+	const std::string SERVER_restore_path("/restore");
+	// POST path
+	const std::string SERVER_delete_path("/delete");
+	const std::string SERVER_create_path("/create");
+	const std::string SERVER_udpate_path("/update");
+
+	const std::string REQUEST_default_http_version("HTTP/1.1");
+	const std::string POST_content_type("Content-Type: application/octet-stream");
 }
 
 enum Protocol {
@@ -43,8 +60,10 @@ bool mySocketClose(int socket);
 // myHTTP.cpp
 int myTcpSend(int socket, const char *buffer, int bufferSize);
 int myTcpRecv(int socket, const char *buffer, int bufferSize);
+bool myResponseRecv(int socket, std::ostringstream &oss);
 bool myRequestRecv(int socket, char *buffer, int bufferSize, std::ostringstream &oss);
-bool parseAndValidateRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion);
-bool createAndSendGetResponse(int socket, std::string const &filePath, std::string const &httpVersion);
+bool parseAndValidateRequest(const std::string &request, std::string &method, std::string &url, std::string &httpVersion);
+bool createAndSendResponse(int socket, const std::string &method, const std::string &url, const std::string &httpVersion, const std::string &requestBody);
+bool createAndSendRequest(int socket, bool isGet, const std::string &url, const std::string &httpVersion, bool isKeepAlive, const char *content, int contentSize);
 
 #endif

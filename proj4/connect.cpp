@@ -15,7 +15,7 @@ void initWinsock(WSADATA *ptr_wsa) {
 
 void myDied(char *str) {
 	perror(str);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in *serverAddress) {
