@@ -42,11 +42,31 @@ int myTcpRecv(int socket, const char *b, int bufferSize) {
 	return recv_size;
 }
 
-bool myRequestRecv(int socket, char *buffer, int bufferSize) {
+bool myContentToStream(int socket, ostringstream &oss, int contentSize) {
+
+	// buffer
+	int bufferSize = BUFFER_SIZE;
+	char buffer[BUFFER_SIZE];
+
+	int gotSize = 0, result;
+	while (gotSize < contentSize) {
+		result = myTcpRecv(socket, buffer, min(bufferSize, contentSize - gotSize));
+		if (result <= 0) return false;
+
+		gotSize += result;
+		oss.write(buffer, result);
+	}
+
+	return true;
+}
+
+bool myRequestRecv(int socket, char *buffer, int bufferSize, std::ostringstream &oss) {
 
 	int gotBytes = 0, result;
+	char *requestEnding;
+	memset(buffer, '\0', bufferSize);
 
-	// loop until empty line reached
+	// loop until request end
 	do {
 		result = recv(socket, buffer + gotBytes, bufferSize - gotBytes, 0);
 		if (result == 0) break;
@@ -57,18 +77,48 @@ bool myRequestRecv(int socket, char *buffer, int bufferSize) {
 		gotBytes += result;
 		if (gotBytes >= bufferSize - 1) return false;
 
-	} while (buffer[gotBytes - 4] != '\r' || buffer[gotBytes - 3] != '\n' || buffer[gotBytes - 2] != '\r' || buffer[gotBytes - 1] != '\n');
+		// search for request ending
+		requestEnding = strstr(buffer, HTTP_REQUEST_ENDING);
+
+	} while (requestEnding == NULL);
 
 	// append NULL at the end
-	buffer[gotBytes] = '\0';
+	*requestEnding = '\0';
+
+	// only GET request expected, no body part
+	if (oss == NULL) return true;
+
+	// get content length from header
+	int contentLength = 0;
+	char *contentLengthBegin = strstr(buffer, HTTP_CONTENT_HEADER);
+	if (contentLengthBegin != NULL) {
+		contentLengthBegin += strlen(HTTP_CONTENT_HEADER);
+		char *contentLengthEnd = strstr(contentLengthBegin, HTTP_line_break.c_str());
+		string tmpString(contentLengthBegin, contentLengthEnd - contentLengthBegin);
+		contentLength = stoi(tmpString);
+	}
+
+	// write body content to stream buffer
+	if (contentLength > 0) {
+
+		// take body from buffer
+		char *bodyStart = requestEnding + strlen(HTTP_REQUEST_ENDING);
+		int bodyGot = gotBytes - (bodyStart - buffer);
+		oss.write(bodyStart, bodyGot);
+
+		// take body from socket
+		if (contentLength - bodyGot > 0) {
+			if (!myContentToStream(socekt, oss, contentLength - bodyGot)) {
+				perror("Error: myContentToStream() during myRequestRecv()");
+				return false;
+			}
+		}
+	}
 
 	return true;
 }
 
-bool parseAndValidateGetRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion) {
-
-	const std::string pathDelimiter = "/";
-	const std::string absolutePathPrefix = "http://";
+bool parseAndValidateRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion) {
 
 	// parse first line
 	size_t lastPosition = 0, newPosition = 0;

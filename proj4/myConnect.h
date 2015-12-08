@@ -15,9 +15,11 @@
 	#include <unistd.h>
 #endif
 
+#define HTTP_REQUEST_ENDING "\r\n\r\n"
+#define HTTP_CONTENT_HEADER "Content-Length:"
 namespace constants {
-	cost std::string HTTP_inline_delimiter(" ");
-	cost std::string HTTP_line_break("\r\n");
+	const std::string HTTP_inline_delimiter(" ");
+	const std::string HTTP_line_break("\r\n");
 }
 
 enum Protocol {
@@ -41,8 +43,8 @@ bool mySocketClose(int socket);
 // myHTTP.cpp
 int myTcpSend(int socket, const char *buffer, int bufferSize);
 int myTcpRecv(int socket, const char *buffer, int bufferSize);
-bool myRequestRecv(int socket, char *buffer, int bufferSize);
-bool parseAndValidateGetRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion);
+bool myRequestRecv(int socket, char *buffer, int bufferSize, std::ostringstream &oss);
+bool parseAndValidateRequest(std::string const &request, std::string &method, std::string &url, std::string &httpVersion);
 bool createAndSendGetResponse(int socket, std::string const &filePath, std::string const &httpVersion);
 
 #endif

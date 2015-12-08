@@ -15,10 +15,9 @@ void httpGetHandler(int socket) {
 	// request buffer
 	int bufferSize = BUFFER_SIZE;
 	char buffer[BUFFER_SIZE];
-	memset(buffer, '\0', bufferSize);
 
 	// take out the whole request header
-	if (!myRequestRecv(socket, buffer, bufferSize)) {
+	if (!myRequestRecv(socket, buffer, bufferSize, NULL)) {
 		oss << "Error: recv() error OR request >= 4096 bytes\n";
 		threadPrint(oss.str().c_str(), "\n");
 		mySocketClose(socket);
