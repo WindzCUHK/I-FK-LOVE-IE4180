@@ -78,7 +78,7 @@ void printFileMeta(FileMeta &meta) {
 	printf("{isDir: %d, timeKey: %lld, path: \"%s\"}\n", meta.isDir, (long long) meta.timeKey, meta.path);
 }
 
-int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootDirPath) {
+int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootDirPath, bool needHidden) {
 
 	// memory
 	FileMeta meta;
@@ -98,7 +98,12 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootD
 
 			// skip '.' file
 			std::string fileName(ent->d_name);
-			if (fileName.at(0) == HIDDEN_FILE) continue;
+			if (needHidden) {
+				if (fileName == UNWANT_DIR_0) continue;
+				if (fileName == UNWANT_DIR_1) continue;
+			} else {
+				if (fileName.at(0) == HIDDEN_FILE) continue;
+			}
 
 			// create file path and check file stat
 			std::string filePath = dirPath + fileName;
@@ -108,7 +113,7 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootD
 			// append file, if needed, read directory
 			fileMetas.push_back(meta);
 			if (meta.isDir) {
-				if (listAllFilesInDir(fileMetas, filePath) == EXIT_FAILURE) {
+				if (listAllFilesInDir(fileMetas, filePath, needHidden) == EXIT_FAILURE) {
 					return EXIT_FAILURE;
 				}
 			}

@@ -283,30 +283,24 @@ bool getFileResponse(int socket, const std::string &filePath, const std::string 
 	return true;
 }
 
-bool createAndSendResponse(bool isClient, int socket, const std::string &method, const std::string &url, const std::string &httpVersion, const std::string &requestBody) {
+bool contentResponse(int socket, const std::string &httpVersion, false, const std::string &content, long contentLength) {
 
-	if (method == constants::HTTP_GET) {
-		if (isClient) {
-			return getFileResponse(socket, url, httpVersion, false);
-		} else {
+	std::string responseHeader;
+	std::string contentType("application/octet-stream");
 
-			// get list
-			if (url.compare(0, constants::SERVER_list_path.length(), constants::SERVER_list_path) == 0) {
-				return true;
-			}
-			if (url.compare(0, constants::SERVER_restore_path.length(), constants::SERVER_restore_path) == 0) {
-				std::string filePath = url.substr(constants::SERVER_restore_path.length());
-				return true;
-			}
+	construtHttpResponseHeader(responseHeader, true, httpVersion, contentType, contentLength, true);
+	if (myTcpSend(socket, responseHeader.c_str(), responseHeader.length()) <= 0) return false;
+	if (myTcpSend(socket, content.c_str(), contentLength) <= 0) return false;
 
-			return false;
-		}
-	}
+	return true;
+}
 
-	// POST body may also be empty
-	if (method == constants::HTTP_POST) {
-		// server part
-		return true;
+bool createAndSendResponse(int socket, const std::string &url, const std::string &httpVersion, const std::string &content, long contentLength) {
+
+	if (contentLength == 0) {
+		return getFileResponse(socket, url, httpVersion, false);
+	} else {
+		return contentResponse(socket, httpVersion, false, content, contentLength);
 	}
 
 	return false;

@@ -87,13 +87,14 @@ void filesDifference(const std::vector<FileMeta> &oldFileMetas, const std::vecto
 	current_difference.clear();
 }
 
-void monitorFile(int socket, const std::string &monitorPath, int refreshInterval) {
+void monitorFile(int socket, const std::string &monitorPath, int refreshInterval, int listenPort) {
 
 	// thread output stream
 	std::ostringstream oss, bodyss;
 	threadPrint("--- monitorFile thread start", "\n");
 
 	// variables
+	std::string listenPortString = std::to_string(listenPort);
 	std::vector<FileMeta> serverFileMetas;
 	std::vector<FileMeta> localfileMetas;
 	std::vector<FileMeta> update_list, delete_list, create_list;
@@ -123,7 +124,7 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		oss << "GET response got\n";
 
 		// generate local file list
-		if (listAllFilesInDir(localfileMetas, monitorPath) == EXIT_FAILURE) {
+		if (listAllFilesInDir(localfileMetas, monitorPath, false) == EXIT_FAILURE) {
 			myDied("Cannot monitor directory!!!");
 		}
 		sort(localfileMetas.begin(), localfileMetas.end(), cmpFileMeta);
@@ -138,7 +139,7 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		std::string contentString;
 		std::string httpVersion = constants::REQUEST_default_http_version;
 		oss << "POST /delete\n";
-		contentString = cgicc::form_urlencode(encodeFileMetas(delete_list));
+		contentString = listenPortString + constants::HTTP_inline_delimiter + cgicc::form_urlencode(encodeFileMetas(delete_list));
 		if (!createAndSendRequest(socket, false, constants::SERVER_delete_path, httpVersion, true, contentString.c_str(), contentString.length())) {
 			oss << "Error createAndSendRequest(): sending POST /delete request\n";
 			threadPrint(oss.str().c_str(), "\n");
@@ -146,7 +147,7 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 			return;
 		}
 		oss << "POST /create\n";
-		contentString = cgicc::form_urlencode(encodeFileMetas(create_list));
+		contentString = listenPortString + constants::HTTP_inline_delimiter + cgicc::form_urlencode(encodeFileMetas(create_list));
 		if (!createAndSendRequest(socket, false, constants::SERVER_create_path, httpVersion, true, contentString.c_str(), contentString.length())) {
 			oss << "Error createAndSendRequest(): sending POST /create request\n";
 			threadPrint(oss.str().c_str(), "\n");
@@ -154,8 +155,8 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 			return;
 		}
 		oss << "POST /update\n";
-		contentString = cgicc::form_urlencode(encodeFileMetas(update_list));
-		if (!createAndSendRequest(socket, false, constants::SERVER_udpate_path, httpVersion, true, contentString.c_str(), contentString.length())) {
+		contentString = listenPortString + constants::HTTP_inline_delimiter + cgicc::form_urlencode(encodeFileMetas(update_list));
+		if (!createAndSendRequest(socket, false, constants::SERVER_update_path, httpVersion, true, contentString.c_str(), contentString.length())) {
 			oss << "Error createAndSendRequest(): sending POST /update request\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
@@ -230,10 +231,10 @@ void httpGetHandler(int socket, const std::string &path) {
 		mySocketClose(socket);
 		return;
 	}
-
+	
 	// create response
 	oss << "Request file path: " << url << '\n';
-	if (!createAndSendResponse(true, socket, method, path + url, httpVersion, constants::EMPTY_STRING)) {
+	if (!createAndSendResponse(socket, path + url, httpVersion, constants::EMPTY_STRING, 0L)) {
 		oss << "Error: file IO OR send()\n";
 		threadPrint(oss.str().c_str(), "\n");
 		mySocketClose(socket);
@@ -274,7 +275,7 @@ int main(int argc, char *argv[]) {
 
 	// check argument
 	if (argc < 3) {
-		std::cout << "Usage: monitorClient [sync folder path] [refresh interval] [server IP] [server port] [client listen port]" << std::endl;
+		std::cout << "Usage: mc.exe [sync folder path] [refresh interval] [server IP] [server port] [client listen port]" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -294,7 +295,7 @@ int main(int argc, char *argv[]) {
 	struct sockaddr_in serverAddress;
 	int serverSocket = getConnectSocket(serverIP, serverPort, protocol, &serverAddress);
 	// file monitoring thread
-	std::thread monitorThread(monitorFile, serverSocket, std::cref(monitorPath), refreshInterval);
+	std::thread monitorThread(monitorFile, serverSocket, std::cref(monitorPath), refreshInterval, int listenPort);
 
 	/*|=======================================================|*/
 	/*|          Listen to GET request from server            |*/

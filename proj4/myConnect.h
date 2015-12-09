@@ -30,10 +30,11 @@ namespace constants {
 	// GET path
 	const std::string SERVER_list_path("/list");
 	const std::string SERVER_restore_path("/restore");
+	const std::string SERVER_restore_list_path("/restoreList");
 	// POST path
 	const std::string SERVER_delete_path("/delete");
 	const std::string SERVER_create_path("/create");
-	const std::string SERVER_udpate_path("/update");
+	const std::string SERVER_update_path("/update");
 
 	const std::string REQUEST_default_http_version("HTTP/1.1");
 	const std::string POST_content_type("Content-Type: application/octet-stream");
@@ -63,7 +64,7 @@ int myTcpRecv(int socket, const char *buffer, int bufferSize);
 bool myResponseRecv(int socket, std::ostringstream &oss);
 bool myRequestRecv(int socket, char *buffer, int bufferSize, std::ostringstream &oss);
 bool parseAndValidateRequest(const std::string &request, std::string &method, std::string &url, std::string &httpVersion);
-bool createAndSendResponse(bool isClient, int socket, const std::string &method, const std::string &url, const std::string &httpVersion, const std::string &requestBody);
+bool createAndSendResponse(int socket, const std::string &url, const std::string &httpVersion, const std::string &content, long contentLength);
 bool createAndSendRequest(int socket, bool isGet, const std::string &url, const std::string &httpVersion, bool isKeepAlive, const char *content, int contentSize);
 
 #endif
