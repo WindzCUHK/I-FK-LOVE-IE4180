@@ -51,6 +51,7 @@ enum Protocol {
 
 // connect.cpp
 void myDied(char *str);
+int getConnectSocketByAddress(Protocol protocol, struct sockaddr_in *address);
 int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in *serverAddress);
 int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in *listenAddress);
 bool mySocketClose(int socket);
@@ -65,6 +66,7 @@ bool myResponseRecv(int socket, std::ostringstream &oss);
 bool myRequestRecv(int socket, char *buffer, int bufferSize, std::ostringstream &oss);
 bool parseAndValidateRequest(const std::string &request, std::string &method, std::string &url, std::string &httpVersion);
 bool createAndSendResponse(int socket, const std::string &url, const std::string &httpVersion, const std::string &content, long contentLength);
+bool createAndSendOK(int socket, const std::string &httpVersion);
 bool createAndSendRequest(int socket, bool isGet, const std::string &url, const std::string &httpVersion, bool isKeepAlive, const char *content, int contentSize);
 
 #endif

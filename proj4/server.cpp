@@ -1,15 +1,58 @@
 #include "myHead.h"
 
 std::mutex g_display_mutex;
+std::mutex fs_changing_mutex;
 
+void myCreate(const std::vector<FileMeta> &v, const std::string &monitorPath, int clientSocket) {
+}
+
+void myDelete(const std::vector<FileMeta> &v, const std::string &monitorPath) {
+	FileMeta localFileMeta;
+	for (std::vector<FileMeta>::iterator it = v.begin(); it != v.end(); ++it) {
+		// skip directory, don't delete
+		if (!it->isDir) {
+
+			// get local FS data
+			std::string localFilePath = monitorPath + it->path;
+			initFileMeta(&localFileMeta, localFilePath.c_str(), localFilePath.length());
+
+			// other client may update it (should not happen), check before take action
+			if (isEqualFileMeta(*it, localfileMetas)) {
+				std::size_t folderPathLength = localFilePath.length() - it->filenameLen;
+				std::string folderPath = localFilePath.substr(0, folderPathLength);
+				std::string newName = HIDDEN_FILE_STR + localFilePath.substr(folderPathLength)
+				newName += TIME_DELIMITER + std::to_string((long long) it->timeKey);
+
+				// no delete, only rename
+				if (rename(localFilePath.c_str(), (folderPath + newName).c_str()) != 0) {
+					perror("Error: myDelete() => rename()");
+				}
+			} else {
+				perror("myDelete(): Unexpected not equal in file meta-data");
+			}
+			// only update and delete will make this fail
+			// both renamed the file, hence save to skip
+		}
+	}
+}
+
+void parsePostBody(std::string bodyString, short *clientListenPort, std::vector<FileMeta> &v) {
+	std::size_t found = bodyString.find(constants::HTTP_inline_delimiter);
+	*clientListenPort = (short) stoi(bodyString.substr(0, found));
+	v.clear();
+	decodeFileMetas(cgicc::form_urldecode(bodyString.substr(found + 1)), v);
+}
 
 bool createAndSendFileList(bool isRestore, int socket, const std::string &httpVersion, const std::string &monitorPath, std::ostringstream &oss) {
 
 	// generate file list
 	std::vector<FileMeta> fileMetas;
-	if (listAllFilesInDir(fileMetas, monitorPath, isRestore) == EXIT_FAILURE) {
-		oss << "Error: Cannot monitor directory!!!\n";
-		return false;
+	{
+		std::lock_guard<std::mutex> guard(fs_changing_mutex);
+		if (listAllFilesInDir(fileMetas, monitorPath, isRestore) == EXIT_FAILURE) {
+			oss << "Error: Cannot monitor directory!!!\n";
+			return false;
+		}
 	}
 
 	// send file list
@@ -22,7 +65,7 @@ bool createAndSendFileList(bool isRestore, int socket, const std::string &httpVe
 	return true;
 }
 
-void httpHandler(int socket, std::string &monitorPath) {
+void httpHandler(int socket, struct sockaddr_in address, std::string &monitorPath) {
 
 	// thread output stream
 	std::ostringstream oss, bodyss;
@@ -32,73 +75,146 @@ void httpHandler(int socket, std::string &monitorPath) {
 	char buffer[BUFFER_SIZE];
 	int bufferSize = BUFFER_SIZE;
 
-	// take out the whole request header
-	if (!myRequestRecv(socket, buffer, bufferSize, bodyss)) {
-		oss << "Error: recv() error OR request >= 4096 bytes\n";
-		threadPrint(oss.str().c_str(), "\n");
-		mySocketClose(socket);
-		return;
-	}
-	oss << "HTTP request:\n" << buffer << '\n';
-
-	// process request
-	const std::string requestString = buffer;
-	std::string method, url, httpVersion;
-	if (!parseAndValidateRequest(requestString, method, url, httpVersion)) {
-		oss << "Error: Unknown request header\n";
-		threadPrint(oss.str().c_str(), "\n");
-		mySocketClose(socket);
-		return;
-	}
-
-	// create response
-	oss << "Request file path: " << url << '\n';
-	if (method == constants::HTTP_POST) {
-		// POST /delete
-		if (url.compare(0, constants::SERVER_delete_path.length(), constants::SERVER_delete_path) == 0) {
+	do {
+		// take out the whole request header
+		bodyss.clear():
+		if (!myRequestRecv(socket, buffer, bufferSize, bodyss)) {
+			oss << "Error: recv() error OR request >= 4096 bytes\n";
+			threadPrint(oss.str().c_str(), "\n");
+			mySocketClose(socket);
+			return;
 		}
-		// POST /create
-		if (url.compare(0, constants::SERVER_create_path.length(), constants::SERVER_create_path) == 0) {
-		}
-		// POST /update
-		if (url.compare(0, constants::SERVER_update_path.length(), constants::SERVER_update_path) == 0) {
+		oss << "HTTP request:\n" << buffer << '\n';
+
+		// process request
+		const std::string requestString = buffer;
+		std::string method, url, httpVersion;
+		if (!parseAndValidateRequest(requestString, method, url, httpVersion)) {
+			oss << "Error: Unknown request header\n";
+			threadPrint(oss.str().c_str(), "\n");
+			mySocketClose(socket);
+			return;
 		}
 
-	} else if (method == constants::HTTP_GET) {
+		// create response
+		oss << "Request file path: " << url << '\n';
+		if (method == constants::HTTP_POST) {
 
-		// GET /list
-		if (url.compare(0, constants::SERVER_list_path.length(), constants::SERVER_list_path) == 0) {
-			if (!createAndSendFileList(false, socket, httpVersion, monitorPath, oss)) {
-				threadPrint(oss.str().c_str(), "\n");
-				mySocketClose(socket);
-				return;
+			// variables for parse POST body
+			std::vector<FileMeta> diffVector;
+			std::string &bodyString = bodyss.str();
+			short clientListenPort = 0;
+			int clientSocket = -1;
+
+			// lock before /delete, unlock after /create
+
+			// POST /delete
+			if (url.compare(0, constants::SERVER_delete_path.length(), constants::SERVER_delete_path) == 0) {
+				fs_changing_mutex.lock():
+
+				// take delete action
+				parsePostBody(bodyString, &clientListenPort, diffVector);
+				myDelete(diffVector, monitorPath);
+
+				// send 200 OK
+				if (!createAndSendOK(socket, httpVersion)) {
+					oss << "Error: createAndSendOK()\n";
+					threadPrint(oss.str().c_str(), "\n");
+					mySocketClose(socket);
+					fs_changing_mutex.unlock():
+					return;
+				}
 			}
-		}
-		// GET /restoreList
-		if (url.compare(0, constants::SERVER_restore_list_path.length(), constants::SERVER_restore_list_path) == 0) {
-			if (!createAndSendFileList(true, socket, httpVersion, monitorPath, oss)) {
-				threadPrint(oss.str().c_str(), "\n");
-				mySocketClose(socket);
-				return;
+			// POST /update
+			if (url.compare(0, constants::SERVER_update_path.length(), constants::SERVER_update_path) == 0) {
+
+				// open client socket for download, once only
+				if (clientSocket < 0) {
+					address->sin_port = htons(clientListenPort);
+					clientSocket = getConnectSocketByAddress(TCP, &address);
+				}
+
+				// take update action
+				parsePostBody(bodyString, &clientListenPort, diffVector);
+				myDelete(diffVector, monitorPath);
+				myCreate(diffVector, monitorPath, clientSocket);
+
+				// send 200 OK
+				if (!createAndSendOK(socket, httpVersion)) {
+					oss << "Error: createAndSendOK()\n";
+					threadPrint(oss.str().c_str(), "\n");
+					mySocketClose(socket);
+					fs_changing_mutex.unlock():
+					return;
+				}
 			}
-		}
-		// GET /restore
-		if (url.compare(0, constants::SERVER_restore_path.length(), constants::SERVER_restore_path) == 0) {
-			std::string filePath = url.substr(constants::SERVER_restore_path.length());
-			if (!createAndSendResponse(socket, monitorPath + filePath, httpVersion, constants::EMPTY_STRING, 0L)) {
-				oss << "Error: file IO OR send()\n";
-				threadPrint(oss.str().c_str(), "\n");
-				mySocketClose(socket);
-				return;
+			// POST /create
+			if (url.compare(0, constants::SERVER_create_path.length(), constants::SERVER_create_path) == 0) {
+				// take create action
+				parsePostBody(bodyString, &clientListenPort, diffVector);
+				myCreate(diffVector, monitorPath, clientSocket);
+
+				// send 200 OK
+				if (!createAndSendOK(socket, httpVersion)) {
+					oss << "Error: createAndSendOK()\n";
+					threadPrint(oss.str().c_str(), "\n");
+					mySocketClose(socket);
+					fs_changing_mutex.unlock():
+					return;
+				}
+
+				fs_changing_mutex.unlock():
 			}
+
+		} else if (method == constants::HTTP_GET) {
+
+			// GET /list
+			if (url.compare(0, constants::SERVER_list_path.length(), constants::SERVER_list_path) == 0) {
+				if (!createAndSendFileList(false, socket, httpVersion, monitorPath, oss)) {
+					threadPrint(oss.str().c_str(), "\n");
+					mySocketClose(socket);
+					return;
+				}
+			}
+			// GET /restoreList
+			if (url.compare(0, constants::SERVER_restore_list_path.length(), constants::SERVER_restore_list_path) == 0) {
+				if (!createAndSendFileList(true, socket, httpVersion, monitorPath, oss)) {
+					threadPrint(oss.str().c_str(), "\n");
+					mySocketClose(socket);
+					return;
+				}
+			}
+			// GET /restore
+			if (url.compare(0, constants::SERVER_restore_path.length(), constants::SERVER_restore_path) == 0) {
+				std::string filePath = url.substr(constants::SERVER_restore_path.length());
+				if (!createAndSendResponse(socket, monitorPath + filePath, httpVersion, constants::EMPTY_STRING, 0L)) {
+					oss << "Error: file IO OR send()\n";
+					threadPrint(oss.str().c_str(), "\n");
+					mySocketClose(socket);
+					return;
+				}
+				break;
+			}
+
+		} else {
+			oss << "Error: Unknown request method\n";
+			threadPrint(oss.str().c_str(), "\n");
+			mySocketClose(socket);
+			return;
 		}
 
-	} else {
-		oss << "Error: Unknown request method\n";
+		// loop ending
+		oss << "=== httpHandler thread loop ending\n";
 		threadPrint(oss.str().c_str(), "\n");
-		mySocketClose(socket);
-		return;
-	}
+		oss.clear();
+
+	} while (true);
+
+
+	// thread ending
+	oss << "--- httpHandler thread end\n";
+	threadPrint(oss.str().c_str(), "\n");
+	mySocketClose(socket);
 }
 
 void acceptLoop(int socket, std::string &monitorPath, int port) {
@@ -118,7 +234,7 @@ void acceptLoop(int socket, std::string &monitorPath, int port) {
 		}
 
 		// new thread to handle the POST request
-		std::thread httpHandlerThread(httpHandler, clientSocket, std::cref(monitorPath));
+		std::thread httpHandlerThread(httpHandler, clientSocket, clientAddress, std::cref(monitorPath));
 		httpHandlerThread.detach();
 	}
 }

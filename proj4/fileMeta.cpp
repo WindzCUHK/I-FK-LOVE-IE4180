@@ -60,14 +60,14 @@ bool cmpFileMetaPathOnly(const FileMeta &a, const FileMeta &b) {
 	else return false;
 }
 
-// bool isEqualFileMeta(const FileMeta &a, const FileMeta &b) {
-// 	if (
-// 		(strcmp(a.path, b.path) == 0) &&
-// 		(difftime(a.timeKey, b.timeKey) == 0) &&
-// 		(a.isDir == b.isDir)
-// 	) return true;
-// 	else return false;
-// }
+bool isEqualFileMeta(const FileMeta &a, const FileMeta &b) {
+	if (
+		(strcmp(a.path, b.path) == 0) &&
+		(((int) difftime(a.timeKey, b.timeKey)) == 0) &&
+		(a.isDir == b.isDir)
+	) return true;
+	else return false;
+}
 
 // bool isEqualPath(const FileMeta &a, const FileMeta &b) {
 // 	if (strcmp(a.path, b.path) == 0) return true;

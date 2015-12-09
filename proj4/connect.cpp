@@ -18,6 +18,21 @@ void myDied(char *str) {
 	exit(EXIT_FAILURE);
 }
 
+int getConnectSocketByAddress(Protocol protocol, struct sockaddr_in *address) {
+	// create socket
+	int type = ((protocol == UDP) ? SOCK_DGRAM : SOCK_STREAM);
+	int connectSocket = socket(AF_INET, type, 0);
+	if (connectSocket == -1) myDied("socket()");
+
+	// end for UDP
+	if (protocol == UDP) return connectSocket;
+
+	// connect
+	if (connect(connectSocket, (struct sockaddr *) address , sizeof(*address)) == -1) myDied("connect()");
+
+	return connectSocket;
+}
+
 int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in *serverAddress) {
 
 	int connectSocket;

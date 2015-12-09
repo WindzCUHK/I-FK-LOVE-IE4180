@@ -172,14 +172,14 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		}
 		bodyss.clear();
 		if (!myResponseRecv(socket, bodyss)) {
-			oss << "Error myResponseRecv(): receiving POST /create response\n";
+			oss << "Error myResponseRecv(): receiving POST /update response\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
 		}
 		bodyss.clear();
 		if (!myResponseRecv(socket, bodyss)) {
-			oss << "Error myResponseRecv(): receiving POST /update response\n";
+			oss << "Error myResponseRecv(): receiving POST /create response\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
@@ -214,6 +214,7 @@ void httpGetHandler(int socket, const std::string &path) {
 	int bufferSize = BUFFER_SIZE;
 
 	// take out the whole request header
+	bodyss.clear();
 	if (!myRequestRecv(socket, buffer, bufferSize, bodyss)) {
 		oss << "Error: recv() error OR request >= 4096 bytes\n";
 		threadPrint(oss.str().c_str(), "\n");

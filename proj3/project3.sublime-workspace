@@ -716,6 +716,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"jqLock",
+			"job_q_mutex",
+			"g_display_mutex",
 			"address",
 			"getConnectSocket",
 			"jqLock",
@@ -840,10 +843,7 @@
 			",,",
 			"\"",
 			";",
-			"\"",
-			"PTC",
-			"sage is saving to recovery",
-			"unSentGTExpireMsgList"
+			"\""
 		],
 		"highlight": true,
 		"in_selection": false,

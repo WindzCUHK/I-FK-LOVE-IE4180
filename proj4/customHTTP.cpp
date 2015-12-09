@@ -283,12 +283,12 @@ bool getFileResponse(int socket, const std::string &filePath, const std::string 
 	return true;
 }
 
-bool contentResponse(int socket, const std::string &httpVersion, false, const std::string &content, long contentLength) {
+bool contentResponse(int socket, const std::string &httpVersion, bool isKeepAlive, const std::string &content, long contentLength) {
 
 	std::string responseHeader;
 	std::string contentType("application/octet-stream");
 
-	construtHttpResponseHeader(responseHeader, true, httpVersion, contentType, contentLength, true);
+	construtHttpResponseHeader(responseHeader, true, httpVersion, contentType, contentLength, isKeepAlive);
 	if (myTcpSend(socket, responseHeader.c_str(), responseHeader.length()) <= 0) return false;
 	if (myTcpSend(socket, content.c_str(), contentLength) <= 0) return false;
 
@@ -300,10 +300,18 @@ bool createAndSendResponse(int socket, const std::string &url, const std::string
 	if (contentLength == 0) {
 		return getFileResponse(socket, url, httpVersion, false);
 	} else {
-		return contentResponse(socket, httpVersion, false, content, contentLength);
+		return contentResponse(socket, httpVersion, true, content, contentLength);
 	}
 
 	return false;
+}
+
+bool createAndSendOK(int socket, const std::string &httpVersion) {
+	std::string responseHeader;
+	construtHttpResponseHeader(responseHeader, true, httpVersion, constant::EMPTY_STRING, 0L, true);
+	if (myTcpSend(socket, responseHeader.c_str(), responseHeader.length()) <= 0) return false;
+
+	return true;
 }
 
 bool createAndSendRequest(int socket, bool isGet, const std::string &url, const std::string &httpVersion, bool isKeepAlive, const char *content, int contentSize) {
