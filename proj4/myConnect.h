@@ -62,7 +62,7 @@ bool mySocketClose(int socket);
 // myHTTP.cpp
 int myTcpSend(int socket, const char *buffer, int bufferSize);
 int myTcpRecv(int socket, const char *buffer, int bufferSize);
-bool myResponseRecv(int socket, std::ostringstream &oss);
+bool myResponseRecv(int socket, std::ostream &os);
 bool myRequestRecv(int socket, char *buffer, int bufferSize, std::ostringstream &oss);
 bool parseAndValidateRequest(const std::string &request, std::string &method, std::string &url, std::string &httpVersion);
 bool createAndSendResponse(int socket, const std::string &url, const std::string &httpVersion, const std::string &content, long contentLength);

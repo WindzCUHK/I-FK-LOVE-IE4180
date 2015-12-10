@@ -296,7 +296,7 @@ int main(int argc, char *argv[]) {
 	struct sockaddr_in serverAddress;
 	int serverSocket = getConnectSocket(serverIP, serverPort, protocol, &serverAddress);
 	// file monitoring thread
-	std::thread monitorThread(monitorFile, serverSocket, std::cref(monitorPath), refreshInterval, int listenPort);
+	std::thread monitorThread(monitorFile, serverSocket, std::cref(monitorPath), refreshInterval, listenPort);
 
 	/*|=======================================================|*/
 	/*|          Listen to GET request from server            |*/

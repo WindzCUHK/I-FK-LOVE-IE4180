@@ -1,6 +1,13 @@
 #ifndef _MODEL_H_
 #define _MODEL_H_
 
+// file time
+#ifdef WIN32
+	#include <sys/utime.h>
+#else
+	#include <utime.h>
+#endif
+
 // constants
 #define BUFFER_SIZE 4096
 #define PATH_MAX 4096
@@ -10,8 +17,6 @@
 	#define PATH_DELIMITER "/"
 #endif
 #define HIDDEN_FILE '.'
-#define UNWANT_DIR_0 "."
-#define UNWANT_DIR_1 ".."
 
 #define HIDDEN_FILE_STR "."
 #define TIME_DELIMITER "_"
@@ -32,6 +37,7 @@ typedef std::deque<FileMeta> fileList;
 
 
 // method on model
+bool setFileTime(time_t *timeKey, const char *filepath);
 void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen);
 bool cmpFileMeta(const FileMeta &a, const FileMeta &b);
 bool cmpFileMetaPathOnly(const FileMeta &a, const FileMeta &b);

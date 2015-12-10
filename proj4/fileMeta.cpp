@@ -1,5 +1,27 @@
 #include "myHead.h"
 
+bool setFileTime(time_t *timeKey, const char *filepath) {
+
+	struct stat fileStat;
+	struct utimbuf new_times;
+
+	// get file stat
+	if (stat(filepath, &fileStat) < 0) {
+		perror(filepath);
+		return false;
+	}
+
+	// access time unchange
+	new_times.actime = fileStat.st_atime;
+	new_times.modtime = *timeKey;
+	if (utime(filepath, &new_times) < 0) {
+		perror(filepath);
+		return false;
+	}
+
+	return true;
+}
+
 // private methods
 void getFileTime(time_t *timeKey, struct stat *fileAttributes) {
 
@@ -98,10 +120,7 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootD
 
 			// skip '.' file
 			std::string fileName(ent->d_name);
-			if (needHidden) {
-				if (fileName == UNWANT_DIR_0) continue;
-				if (fileName == UNWANT_DIR_1) continue;
-			} else {
+			if (!needHidden) {
 				if (fileName.at(0) == HIDDEN_FILE) continue;
 			}
 
@@ -110,11 +129,14 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootD
 			// std::cout << filePath << std::endl;
 			initFileMeta(&meta, filePath.c_str(), fileName.length());
 
-			// append file, if needed, read directory
-			fileMetas.push_back(meta);
-			if (meta.isDir) {
-				if (listAllFilesInDir(fileMetas, filePath, needHidden) == EXIT_FAILURE) {
-					return EXIT_FAILURE;
+			// skip hidden directory
+			if (!meta.isDir || fileName.at(0) != HIDDEN_FILE) {
+				// append file, if needed, read directory
+				fileMetas.push_back(meta);
+				if (meta.isDir) {
+					if (listAllFilesInDir(fileMetas, filePath, needHidden) == EXIT_FAILURE) {
+						return EXIT_FAILURE;
+					}
 				}
 			}
 		}

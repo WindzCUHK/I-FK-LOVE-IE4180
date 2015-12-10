@@ -42,7 +42,7 @@ int myTcpRecv(int socket, const char *b, int bufferSize) {
 	return recv_size;
 }
 
-bool myContentToStream(int socket, ostringstream &oss, int contentSize) {
+bool myContentToStream(int socket, std::ostream &os, int contentSize) {
 
 	// buffer
 	int bufferSize = BUFFER_SIZE;
@@ -54,7 +54,7 @@ bool myContentToStream(int socket, ostringstream &oss, int contentSize) {
 		if (result <= 0) return false;
 
 		gotSize += result;
-		oss.write(buffer, result);
+		os.write(buffer, result);
 	}
 
 	return true;
@@ -89,7 +89,7 @@ bool myHttpHeaderRecv(int socket, char *buffer, int bufferSize, int *httpPackage
 	return true;
 }
 
-bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPackageSizeGot, std::ostringstream &oss) {
+bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPackageSizeGot, std::ostream &os) {
 
 	// get content length from header (find start position, find ending position, convert to int)
 	int contentLength = 0;
@@ -107,11 +107,11 @@ bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPack
 		// take body from buffer
 		char *bodyStart = headerBuffer + strlen(headerBuffer) + strlen(HTTP_REQUEST_ENDING);
 		int bodyGot = httpPackageSizeGot - (bodyStart - headerBuffer);
-		oss.write(bodyStart, bodyGot);
+		os.write(bodyStart, bodyGot);
 
 		// take body from socket
 		if (contentLength - bodyGot > 0) {
-			if (!myContentToStream(socket, oss, contentLength - bodyGot)) {
+			if (!myContentToStream(socket, os, contentLength - bodyGot)) {
 				perror("Error: myContentToStream() during myRequestRecv()");
 				return false;
 			}
@@ -121,7 +121,7 @@ bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPack
 	return true;
 }
 
-bool myResponseRecv(int socket, std::ostringstream &oss) {
+bool myResponseRecv(int socket, std::ostream &os) {
 
 	int httpPackageSizeGot;
 	char buffer[BUFFER_SIZE];
@@ -140,7 +140,7 @@ bool myResponseRecv(int socket, std::ostringstream &oss) {
 	}
 
 	// get body
-	if (!myHttpBodyRecv(socket, buffer, bufferSize, httpPackageSizeGot, oss)) {
+	if (!myHttpBodyRecv(socket, buffer, bufferSize, httpPackageSizeGot, os)) {
 		perror("Error: myRequestRecv() => myHttpBodyRecv()");
 		return false;
 	}
@@ -308,7 +308,7 @@ bool createAndSendResponse(int socket, const std::string &url, const std::string
 
 bool createAndSendOK(int socket, const std::string &httpVersion) {
 	std::string responseHeader;
-	construtHttpResponseHeader(responseHeader, true, httpVersion, constant::EMPTY_STRING, 0L, true);
+	construtHttpResponseHeader(responseHeader, true, httpVersion, constants::EMPTY_STRING, 0L, true);
 	if (myTcpSend(socket, responseHeader.c_str(), responseHeader.length()) <= 0) return false;
 
 	return true;
@@ -334,6 +334,10 @@ bool createAndSendRequest(int socket, bool isGet, const std::string &url, const 
 
 	// header ending
 	header += constants::HTTP_line_break;
+
+	// debug
+	cout << header << endl;
+	cout << content << endl;
 
 	// send header and content
 	if (myTcpSend(socket, header.c_str(), header.length()) <= 0) return false;

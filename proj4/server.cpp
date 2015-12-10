@@ -3,10 +3,73 @@
 std::mutex g_display_mutex;
 std::mutex fs_changing_mutex;
 
-void myCreate(const std::vector<FileMeta> &v, const std::string &monitorPath, int clientSocket) {
+void donwloadFileHandler(struct sockaddr_in address, FileMeta fm, const std::string &monitorPath) {
+
+	std::ofstream ofs;
+	std::ostringstream oss;
+	std::string url(fm.path);
+
+	oss << "--- donwloadFileHandler start\n";
+
+	// connect to client
+	int clientSocket = getConnectSocketByAddress(TCP, &address);
+
+	// send GET request to client
+	oss << "start send GET request\n";
+	if (!createAndSendRequest(clientSocket, true, url, constants::REQUEST_default_http_version, false, NULL, 0)) {
+		oss << "Error createAndSendRequest(): GET " << url;
+		threadPrint(oss.str().c_str(), "\n");
+		mySocketClose(clientSocket);
+		return;
+	}
+
+	// write response content to file
+	oss << "open file: " << monitorPath + fm.path << "\n";
+	ofs.open(monitorPath + fm.path);
+	oss << "waiting for response\n";
+	if (!myResponseRecv(clientSocket, ofs)) {
+		oss << "Error myResponseRecv(): GET " << url;
+		threadPrint(oss.str().c_str(), "\n");
+		mySocketClose(clientSocket);
+		return;
+	}
+
+	// close socket and file
+	mySocketClose(clientSocket);
+	ofs.close();
+
+	// set file modification time  as client
+	oss << "change file modification date\n";
+	if (!setFileTime(&(fm.timeKey), fm.path)) {
+		oss << "Error setFileTime(): GET " << url;
+		threadPrint(oss.str().c_str(), "\n");
+		return;
+	}
+
+	oss << "--- donwloadFileHandler end\n";
+	threadPrint(oss.str().c_str(), "\n");
 }
 
-void myDelete(const std::vector<FileMeta> &v, const std::string &monitorPath) {
+void myCreate(std::vector<FileMeta> &v, const std::string &monitorPath, struct sockaddr_in *address) {
+
+	std::vector<std::thread> donwloadFileHandlerThreads;
+
+	for (std::vector<FileMeta>::iterator it = v.begin(); it != v.end(); ++it) {
+		// for Dir just create, else GET from client
+		if (it->isDir) {
+			std::string linuxCommand("mkdir -p ");
+			system((linuxCommand + monitorPath + it->path).c_str());
+		} else {
+			// parallel donwload by threads
+			donwloadFileHandlerThreads.emplace_back(donwloadFileHandler, *address, *it, std::cref(monitorPath));
+		}
+	}
+
+	// wait for all download threads to finish
+	for (auto &thread: donwloadFileHandlerThreads) thread.join();
+}
+
+void myDelete(std::vector<FileMeta> &v, const std::string &monitorPath) {
 	FileMeta localFileMeta;
 	for (std::vector<FileMeta>::iterator it = v.begin(); it != v.end(); ++it) {
 		// skip directory, don't delete
@@ -17,10 +80,10 @@ void myDelete(const std::vector<FileMeta> &v, const std::string &monitorPath) {
 			initFileMeta(&localFileMeta, localFilePath.c_str(), localFilePath.length());
 
 			// other client may update it (should not happen), check before take action
-			if (isEqualFileMeta(*it, localfileMetas)) {
+			if (isEqualFileMeta(*it, localFileMeta)) {
 				std::size_t folderPathLength = localFilePath.length() - it->filenameLen;
 				std::string folderPath = localFilePath.substr(0, folderPathLength);
-				std::string newName = HIDDEN_FILE_STR + localFilePath.substr(folderPathLength)
+				std::string newName = HIDDEN_FILE_STR + localFilePath.substr(folderPathLength);
 				newName += TIME_DELIMITER + std::to_string((long long) it->timeKey);
 
 				// no delete, only rename
@@ -65,7 +128,7 @@ bool createAndSendFileList(bool isRestore, int socket, const std::string &httpVe
 	return true;
 }
 
-void httpHandler(int socket, struct sockaddr_in address, std::string &monitorPath) {
+void httpHandler(int socket, struct sockaddr_in address, const std::string &monitorPath) {
 
 	// thread output stream
 	std::ostringstream oss, bodyss;
@@ -75,9 +138,10 @@ void httpHandler(int socket, struct sockaddr_in address, std::string &monitorPat
 	char buffer[BUFFER_SIZE];
 	int bufferSize = BUFFER_SIZE;
 
+try {
 	do {
 		// take out the whole request header
-		bodyss.clear():
+		bodyss.clear();
 		if (!myRequestRecv(socket, buffer, bufferSize, bodyss)) {
 			oss << "Error: recv() error OR request >= 4096 bytes\n";
 			threadPrint(oss.str().c_str(), "\n");
@@ -102,15 +166,14 @@ void httpHandler(int socket, struct sockaddr_in address, std::string &monitorPat
 
 			// variables for parse POST body
 			std::vector<FileMeta> diffVector;
-			std::string &bodyString = bodyss.str();
+			std::string bodyString = bodyss.str();
 			short clientListenPort = 0;
-			int clientSocket = -1;
 
 			// lock before /delete, unlock after /create
 
 			// POST /delete
 			if (url.compare(0, constants::SERVER_delete_path.length(), constants::SERVER_delete_path) == 0) {
-				fs_changing_mutex.lock():
+				fs_changing_mutex.lock();
 
 				// take delete action
 				parsePostBody(bodyString, &clientListenPort, diffVector);
@@ -121,30 +184,25 @@ void httpHandler(int socket, struct sockaddr_in address, std::string &monitorPat
 					oss << "Error: createAndSendOK()\n";
 					threadPrint(oss.str().c_str(), "\n");
 					mySocketClose(socket);
-					fs_changing_mutex.unlock():
+					fs_changing_mutex.unlock();
 					return;
 				}
 			}
 			// POST /update
 			if (url.compare(0, constants::SERVER_update_path.length(), constants::SERVER_update_path) == 0) {
 
-				// open client socket for download, once only
-				if (clientSocket < 0) {
-					address->sin_port = htons(clientListenPort);
-					clientSocket = getConnectSocketByAddress(TCP, &address);
-				}
-
 				// take update action
 				parsePostBody(bodyString, &clientListenPort, diffVector);
 				myDelete(diffVector, monitorPath);
-				myCreate(diffVector, monitorPath, clientSocket);
+				address.sin_port = htons(clientListenPort);
+				myCreate(diffVector, monitorPath, &address);
 
 				// send 200 OK
 				if (!createAndSendOK(socket, httpVersion)) {
 					oss << "Error: createAndSendOK()\n";
 					threadPrint(oss.str().c_str(), "\n");
 					mySocketClose(socket);
-					fs_changing_mutex.unlock():
+					fs_changing_mutex.unlock();
 					return;
 				}
 			}
@@ -152,18 +210,19 @@ void httpHandler(int socket, struct sockaddr_in address, std::string &monitorPat
 			if (url.compare(0, constants::SERVER_create_path.length(), constants::SERVER_create_path) == 0) {
 				// take create action
 				parsePostBody(bodyString, &clientListenPort, diffVector);
-				myCreate(diffVector, monitorPath, clientSocket);
+				address.sin_port = htons(clientListenPort);
+				myCreate(diffVector, monitorPath, &address);
 
 				// send 200 OK
 				if (!createAndSendOK(socket, httpVersion)) {
 					oss << "Error: createAndSendOK()\n";
 					threadPrint(oss.str().c_str(), "\n");
 					mySocketClose(socket);
-					fs_changing_mutex.unlock():
+					fs_changing_mutex.unlock();
 					return;
 				}
 
-				fs_changing_mutex.unlock():
+				fs_changing_mutex.unlock();
 			}
 
 		} else if (method == constants::HTTP_GET) {
@@ -209,6 +268,10 @@ void httpHandler(int socket, struct sockaddr_in address, std::string &monitorPat
 		oss.clear();
 
 	} while (true);
+
+} catch (const std::exception& e) {
+	threadPrint(oss.str().c_str(), "\n");
+}
 
 
 	// thread ending
