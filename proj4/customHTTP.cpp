@@ -69,7 +69,10 @@ bool myHttpHeaderRecv(int socket, char *buffer, int bufferSize, int *httpPackage
 	// loop until request end
 	do {
 		result = recv(socket, buffer + gotBytes, bufferSize - gotBytes, 0);
-		if (result == 0) break;
+		if (result == 0) {
+			perror("myHttpHeaderRecv(): unexpected client socket close");
+			return false;
+		}
 		if (result == -1) {
 			perror("recv()");
 			return false;
@@ -98,9 +101,10 @@ bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPack
 		contentLengthBegin += strlen(HTTP_CONTENT_HEADER);
 		char *contentLengthEnd = strstr(contentLengthBegin, constants::HTTP_line_break.c_str());
 		string tmpString(contentLengthBegin, contentLengthEnd - contentLengthBegin);
+		cout << "xx--\t" << tmpString << endl;
 		contentLength = stoi(tmpString);
 	}
-
+	
 	// write body content to stream buffer
 	if (contentLength > 0) {
 
@@ -135,15 +139,18 @@ bool myResponseRecv(int socket, std::ostream &os) {
 
 	// check 200 OK
 	if (strstr(buffer, "200") != (buffer + constants::REQUEST_default_http_version.length() + constants::HTTP_inline_delimiter.length())) {
-		perror("Error: myRequestRecv() => HTTP not 200 OK");
+		perror("Error: myResponseRecv() => HTTP not 200 OK");
 		return false;
 	}
 
 	// get body
 	if (!myHttpBodyRecv(socket, buffer, bufferSize, httpPackageSizeGot, os)) {
-		perror("Error: myRequestRecv() => myHttpBodyRecv()");
+		perror("Error: myResponseRecv() => myHttpBodyRecv()");
 		return false;
 	}
+
+	// debug
+	cout << buffer << endl;
 
 	return true;
 }
@@ -219,7 +226,7 @@ void construtHttpResponseHeader(std::string &responseHeader, bool isOK, const st
 		responseHeader += "200 OK" + constants::HTTP_line_break;
 		if (contentLength > 0L) {
 			responseHeader += "Content-Type: " + contentType + constants::HTTP_line_break;
-			responseHeader += "Contet-Length: " + to_string(contentLength) + constants::HTTP_line_break;
+			responseHeader += "Content-Length: " + to_string(contentLength) + constants::HTTP_line_break;
 		}
 		if (isKeepAlive) {
 			responseHeader += "Connection: keep-alive" + constants::HTTP_line_break;
@@ -292,12 +299,15 @@ bool contentResponse(int socket, const std::string &httpVersion, bool isKeepAliv
 	if (myTcpSend(socket, responseHeader.c_str(), responseHeader.length()) <= 0) return false;
 	if (myTcpSend(socket, content.c_str(), contentLength) <= 0) return false;
 
+	// debug
+	cout << "response: \n" << responseHeader << content << endl;
+
 	return true;
 }
 
 bool createAndSendResponse(int socket, const std::string &url, const std::string &httpVersion, const std::string &content, long contentLength) {
 
-	if (contentLength == 0) {
+	if (url.length() != 0) {
 		return getFileResponse(socket, url, httpVersion, false);
 	} else {
 		return contentResponse(socket, httpVersion, true, content, contentLength);
@@ -326,7 +336,7 @@ bool createAndSendRequest(int socket, bool isGet, const std::string &url, const 
 		header += constants::HTTP_connection_keep_alive + constants::HTTP_line_break;
 	}
 
-	// content type and lenght header
+	// content type and length header
 	if (!isGet && contentSize > 0) {
 		header += constants::POST_content_type + constants::HTTP_line_break;
 		header += "Content-Length: " + std::to_string(contentSize) + constants::HTTP_line_break;
@@ -337,7 +347,7 @@ bool createAndSendRequest(int socket, bool isGet, const std::string &url, const 
 
 	// debug
 	cout << header << endl;
-	cout << content << endl;
+	if (content != NULL) cout << content << endl;
 
 	// send header and content
 	if (myTcpSend(socket, header.c_str(), header.length()) <= 0) return false;

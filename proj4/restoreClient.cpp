@@ -42,19 +42,23 @@ int main(int argc, char *argv[]) {
 		myDied("Error createAndSendRequest(): sending GET /restoreList request\n");
 	}
 	cout << "sent - GET /restoreList" << endl;
-	getchar();
 
 	// wait for server response
 	ostringstream bodyss;
 	vector<FileMeta> serverFileMetas;
+	cout << "waiting for GET response ..." << endl;
 	if (!myResponseRecv(serverSocket, bodyss)) {
 		mySocketClose(serverSocket);
 		myDied("Error myResponseRecv(): receiving GET /restoreList response\n");
 	}
 	decodeFileMetas(cgicc::form_urldecode(bodyss.str()), serverFileMetas);
 	sort(serverFileMetas.begin(), serverFileMetas.end(), cmpFileMeta);
+	// debug
+	cout << bodyss.str() << endl;
 	cout << "got - GET /restoreList" << endl;
-	getchar();
+
+	// debug
+	for (auto &fm: serverFileMetas) {printFileMeta(fm);}
 
 	// parse file list
 	vector<string> pathKeys;
@@ -94,7 +98,7 @@ int main(int argc, char *argv[]) {
 	// checking user input
 	if (pathIndex < 0 || ((int) pathKeys.size()) < pathIndex) {
 		mySocketClose(serverSocket);
-		cout << "Invalid index. Got problems on ur eyes? Check them first before u come back." << endl;
+		cout << "Invalid index. Got problems on your eyes? Check them first before u come back." << endl;
 		exit(EXIT_SUCCESS);
 	}
 
@@ -111,13 +115,13 @@ int main(int argc, char *argv[]) {
 
 	// get user input again
 	int timeIndex = 0;
-	cout << "Please input the timestamp index of version you want to restore: ";
+	cout << "Please input the timestamps index of version you want to restore: ";
 	cin >> timeIndex;
 
 	// checking user input again
 	if (timeIndex < 0 || ((int) timeKeys.size()) < timeIndex) {
 		mySocketClose(serverSocket);
-		cout << "Invalid index. Got problems on ur hand? Handicap-proof is difficult." << endl;
+		cout << "Invalid index. Got problems on your hand? Handicap-proof is difficult." << endl;
 		exit(EXIT_SUCCESS);
 	}
 

@@ -230,7 +230,7 @@ void decodeFileMetas(const std::string &data, std::vector<FileMeta> &v) {
 
 	iss.read(isDir, booleanSize);
 	while (!(iss.eof())) {
-		cout << "[start] EOF: "<< iss.eof() << endl;
+		// cout << "[start] EOF: "<< iss.eof() << endl;
 
 		iss.read(filenameLen, shortSize);
 		iss.read(timeKey, timeSize);

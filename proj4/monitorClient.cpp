@@ -112,7 +112,7 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		oss << "GET request sent\n";
 
 		// wait for server to response file list, and then decode + sort it
-		bodyss.clear();
+		bodyss.str("");
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving GET /list response\n";
 			threadPrint(oss.str().c_str(), "\n");
@@ -163,21 +163,21 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 			return;
 		}
 
-		bodyss.clear();
+		bodyss.str("");
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving POST /delete response\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
 		}
-		bodyss.clear();
+		bodyss.str("");
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving POST /update response\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
 		}
-		bodyss.clear();
+		bodyss.str("");
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving POST /create response\n";
 			threadPrint(oss.str().c_str(), "\n");
@@ -196,7 +196,7 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		// loop ending
 		oss << "=== monitor loop end! Waiting " << refreshInterval << "ms ...\n";
 		threadPrint(oss.str().c_str(), "\n");
-		oss.clear();
+		oss.str("");
 
 		// sleep
 		std::this_thread::sleep_for(std::chrono::milliseconds(refreshInterval));
@@ -214,7 +214,7 @@ void httpGetHandler(int socket, const std::string &path) {
 	int bufferSize = BUFFER_SIZE;
 
 	// take out the whole request header
-	bodyss.clear();
+	bodyss.str("");
 	if (!myRequestRecv(socket, buffer, bufferSize, bodyss)) {
 		oss << "Error: recv() error OR request >= 4096 bytes\n";
 		threadPrint(oss.str().c_str(), "\n");

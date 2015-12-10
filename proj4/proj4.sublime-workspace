@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"content",
+				"contentSize"
+			],
+			[
 				"pat",
 				"pathKeys"
 			],
@@ -510,41 +514,16 @@
 			[
 				"all",
 				"allLogs"
-			],
-			[
-				"log",
-				"logPattern"
 			]
 		]
 	},
 	"buffers":
 	[
-		{
-			"file": "linux.sh",
-			"settings":
-			{
-				"buffer_size": 763,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "restoreClient.cpp",
-			"settings":
-			{
-				"buffer_size": 4859,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "",
-	"build_system_choices":
-	[
-	],
-	"build_varint": "",
 	"command_palette":
 	{
 		"height": 215.0,
-		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -596,11 +575,7 @@
 	},
 	"console":
 	{
-		"height": 153.0,
-		"history":
-		[
-			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
-		]
+		"height": 153.0
 	},
 	"distraction_free":
 	{
@@ -611,12 +586,15 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4"
-	],
 	"file_history":
 	[
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/linux.sh",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/server.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/customHTTP.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/restoreClient.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/fileMeta.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myConnect.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/monitorClient.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/server.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/restoreClient.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/monitorClient.cpp",
@@ -629,15 +607,9 @@
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/myHead.h",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/tt.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/model.h",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/customHTTP.cpp",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myConnect.h",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/monitorClient.cpp",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/fileMeta.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/connect.cpp",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/server.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/threadUtil.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myThread.h",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/linux.sh",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myHead.h",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/testMain.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/postExample.txt",
@@ -743,8 +715,7 @@
 		"/C/Users/windz.fan/Desktop/logViewer/public/js/main.js",
 		"/C/Users/windz.fan/workspace/testing/src/ModuleInScala.scala",
 		"/C/Users/windz.fan/workspace/testing/src/Core.scala",
-		"/C/Users/windz.fan/workspace/RuleEngine/src/test/java/TestCore.scala",
-		"/C/Users/windz.fan/.Nimi Places/Containers/Temp/1.java"
+		"/C/Users/windz.fan/workspace/RuleEngine/src/test/java/TestCore.scala"
 	],
 	"find":
 	{
@@ -752,7 +723,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 92.0,
+		"height": 106.0,
 		"where_history":
 		[
 			""
@@ -763,6 +734,28 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"[start]",
+			"myResponseRecv",
+			"Contet-Length:",
+			"HTTP_CONTENT_HEADER",
+			"myHttpBodyRecv",
+			"myResponseRecv",
+			";;",
+			"s.clear()",
+			"oss.clear()",
+			"myResponseRecv",
+			"=== httpHandler thread loop ending",
+			"--- httpHandler thread start",
+			"myContentToStream",
+			"myHttpHeaderRecv",
+			"myRequestRecv",
+			"Invalid",
+			"createAndSendRequest",
+			"createAndSendResponse",
+			"createAndSendFileList",
+			"contentResponse",
+			"createAndSendResponse",
+			"createAndSendFileList",
 			"dir",
 			"replace",
 			"cmpFileMeta",
@@ -868,29 +861,7 @@
 			"myHttpBodyRecv",
 			"createAndSendResponse",
 			"constans",
-			"NULL",
-			"construtHttpResponseHeader",
-			"nullptr",
-			"getFileResponse",
-			"HTTP_line_break",
-			"construtHttpResponseHeader",
-			"socekt",
-			"httpPackageSize",
-			"constant[^s]",
-			"constant",
-			"myHttpBodyRecv",
-			"bodyss",
-			"myResponseRecv",
-			"bodyss",
-			"myResponseRecv",
-			"createAndSendResponse",
-			"iskeepaliv",
-			"myResponseRecv",
-			"sort",
-			"buffer",
-			"myTcpSend(",
-			"GET\"",
-			"GET"
+			"NULL"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1020,66 +991,8 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "linux.sh",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 763,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								536,
-								536
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "restoreClient.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4859,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								963,
-								963
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 280.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1122,8 +1035,6 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/User/Node.sublime-build",
-	"project": "proj4.sublime-project",
 	"replace":
 	{
 		"height": 64.0
@@ -1132,7 +1043,6 @@
 	"select_file":
 	{
 		"height": 0.0,
-		"last_filter": "",
 		"selected_items":
 		[
 		],
@@ -1141,7 +1051,6 @@
 	"select_project":
 	{
 		"height": 500.0,
-		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -1155,30 +1064,10 @@
 		],
 		"width": 380.0
 	},
-	"select_symbol":
-	{
-		"height": 67.0,
-		"last_filter": "",
-		"selected_items":
-		[
-			[
-				"ConnectionMgr",
-				"ConnectionMgr"
-			]
-		],
-		"width": 400.0
-	},
-	"selected_group": 0,
-	"settings":
-	{
-	},
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 263.0,
-	"status_bar_visible": true,
-	"template_settings":
-	{
-	}
+	"status_bar_visible": true
 }
