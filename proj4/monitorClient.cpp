@@ -291,7 +291,7 @@ int main(int argc, char *argv[]) {
 	// open config file
 	std::string line;
 	std::ifstream configFile(argv[2]);
-	std::getline(infile, line);
+	std::getline(configFile, line);
 	std::istringstream iss(line);
 	iss >> line;
 	int refreshInterval = stoi(line);
@@ -302,7 +302,7 @@ int main(int argc, char *argv[]) {
 	int serverPort = stoi(line);
 	iss >> line;
 	int listenPort = stoi(line);
-	infile.close();
+	configFile.close();
 
 	// constants
 	const Protocol protocol = TCP;
@@ -326,6 +326,10 @@ int main(int argc, char *argv[]) {
 	int listenSocket = getListenSocket(NULL, listenPort, protocol, &listenAddress);
 	// accept loop
 	acceptLoop(listenSocket, monitorPath, listenPort);
+	
+	#ifdef WIN32
+		WSACleanup();
+	#endif
 
 	threadPrint("Client is KO ed...", "");
 	return 0;

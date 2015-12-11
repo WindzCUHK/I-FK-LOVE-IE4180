@@ -521,14 +521,9 @@
 	[
 	],
 	"build_system": "",
-	"build_system_choices":
-	[
-	],
-	"build_varint": "",
 	"command_palette":
 	{
 		"height": 400.0,
-		"last_filter": "ss c",
 		"selected_items":
 		[
 			[
@@ -584,11 +579,7 @@
 	},
 	"console":
 	{
-		"height": 153.0,
-		"history":
-		[
-			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
-		]
+		"height": 153.0
 	},
 	"distraction_free":
 	{
@@ -599,12 +590,17 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4"
-	],
 	"file_history":
 	[
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/customHTTP.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/connect.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/monitorClient.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/restoreClient.cpp",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/config.txt",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myConnect.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myHead.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myModel.h",
+		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/fileMeta.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/server.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/customHTTP.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/linux.sh",
@@ -623,16 +619,10 @@
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/connect.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/tt.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/model.h",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/customHTTP.cpp",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myConnect.h",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/monitorClient.cpp",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/fileMeta.cpp",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/connect.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/server.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/threadUtil.cpp",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myThread.h",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/linux.sh",
-		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/myHead.h",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/testMain.cpp",
 		"/C/Users/windz.fan/Downloads/I-FK-LOVE-IE4180/proj4/postExample.txt",
 		"/Users/windz/Code/I-FK-LOVE-IE4180/proj4/testMain.cpp",
@@ -729,10 +719,7 @@
 		"/C/Users/windz.fan/Desktop/msgSearcher/config/dbServerList.json",
 		"/C/Users/windz.fan/Desktop/msgSearcher/configLoader.js",
 		"/C/Users/windz.fan/Desktop/msgSearcher/dbConnections.js",
-		"/C/Users/windz.fan/Desktop/msgSearcher/main.js",
-		"/D/Temp/xxx/fixLog.md",
-		"/C/Users/windz.fan/Desktop/msgSearcher/msg.html",
-		"/C/Users/windz.fan/Desktop/msgSearcher/Msg Searcher.html"
+		"/C/Users/windz.fan/Desktop/msgSearcher/main.js"
 	],
 	"find":
 	{
@@ -740,7 +727,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 92.0,
+		"height": 106.0,
 		"where_history":
 		[
 			""
@@ -751,6 +738,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"getConnectSocket",
+			"// FK windows",
+			"filePath",
+			"\n	iss >> line;",
+			"std::min",
 			"sent - GET /restore",
 			"fileNameLength",
 			"createAndSendResponse",
@@ -873,12 +865,7 @@
 			"buffer",
 			"char*",
 			"myRequestRecv",
-			"monitorFile",
-			"getFileResponse",
-			"construtHttpResponseHeader",
-			"getFileResponse",
-			"endl",
-			"cout"
+			"monitorFile"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1053,8 +1040,6 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/User/Node.sublime-build",
-	"project": "proj4.sublime-project",
 	"replace":
 	{
 		"height": 64.0
@@ -1063,9 +1048,16 @@
 	"select_file":
 	{
 		"height": 0.0,
-		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"con",
+				"connect.cpp"
+			],
+			[
+				"file",
+				"fileMeta.cpp"
+			],
 			[
 				"cus",
 				"customHTTP.cpp"
@@ -1084,7 +1076,6 @@
 	"select_project":
 	{
 		"height": 500.0,
-		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -1102,30 +1093,10 @@
 		],
 		"width": 380.0
 	},
-	"select_symbol":
-	{
-		"height": 67.0,
-		"last_filter": "",
-		"selected_items":
-		[
-			[
-				"ConnectionMgr",
-				"ConnectionMgr"
-			]
-		],
-		"width": 400.0
-	},
-	"selected_group": 0,
-	"settings":
-	{
-	},
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 263.0,
-	"status_bar_visible": true,
-	"template_settings":
-	{
-	}
+	"status_bar_visible": true
 }

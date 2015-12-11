@@ -33,6 +33,10 @@ int main(int argc, char *argv[]) {
 	int serverPort = atoi(argv[3]);
 
 	// connect to server
+	#ifdef WIN32
+		WSADATA wsa;
+		initWinsock(&wsa);
+	#endif
 	struct sockaddr_in serverAddress;
 	int serverSocket = getConnectSocket(serverIP, serverPort, TCP, &serverAddress);
 
@@ -158,5 +162,10 @@ int main(int argc, char *argv[]) {
 	cout << "File restore to " << restoreFilePath << endl;
 	cout << "Don't delete it again~" << endl;
 	mySocketClose(serverSocket);
+
+	#ifdef WIN32
+		WSACleanup();
+	#endif
+
 	return 0;
 }

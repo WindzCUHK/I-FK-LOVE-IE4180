@@ -199,5 +199,9 @@ int main(int argc, char* argv[]) {
 	myAccept(isThreadPool, threadPoolSize, listenSocket);
 	cout << "KO" << endl;
 
+	#ifdef WIN32
+		WSACleanup();
+	#endif
+
 	return 0;
 }
