@@ -182,7 +182,7 @@ void getFileNameFromPath(std::string &filname, char *path, short fileNameLen) {
 // }
 std::string encodeFileMetas(std::vector<FileMeta> v) {
 
-	size_t booleanSize = 1, shortSize = 2, timeSize = 8, intSize = 4;
+	const size_t booleanSize = 1, shortSize = 2, timeSize = 8, intSize = 4;
 
 	char isDir[booleanSize];
 	char filenameLen[shortSize];
@@ -212,9 +212,7 @@ std::string encodeFileMetas(std::vector<FileMeta> v) {
 
 void decodeFileMetas(const std::string &data, std::vector<FileMeta> &v) {
 
-	using namespace std;
-
-	size_t booleanSize = 1, shortSize = 2, timeSize = 8, intSize = 4;
+	const size_t booleanSize = 1, shortSize = 2, timeSize = 8, intSize = 4;
 
 	char isDir[booleanSize];
 	char filenameLen[shortSize];
@@ -230,7 +228,6 @@ void decodeFileMetas(const std::string &data, std::vector<FileMeta> &v) {
 
 	iss.read(isDir, booleanSize);
 	while (!(iss.eof())) {
-		// cout << "[start] EOF: "<< iss.eof() << endl;
 
 		iss.read(filenameLen, shortSize);
 		iss.read(timeKey, timeSize);

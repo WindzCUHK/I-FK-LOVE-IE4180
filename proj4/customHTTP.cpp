@@ -252,11 +252,6 @@ void construtHttpResponseHeader(std::string &responseHeader, bool isOK, const st
 
 bool getFileResponse(int socket, const std::string &filePath, const std::string &httpVersion, bool isKeepAlive) {
 
-	// FK windows
-	#ifdef WIN32
-		std::replace(filePath.begin(), filePath.end(), HTTP_path_delimiter.c_str(), PATH_DELIMITER);
-	#endif
-
 	// open file
 	FILE *file;
 	file = fopen(filePath.c_str(), "rb");
@@ -289,7 +284,7 @@ bool getFileResponse(int socket, const std::string &filePath, const std::string 
 		size_t bytesShouldSent;
 		do {
 			// read from file
-			bytesShouldSent = std::min(contentLength - sentTotal, (long) fileBufferSize);
+			bytesShouldSent = (std::min)(contentLength - sentTotal, (long) fileBufferSize);
 			readBytes = fread(fileBuffer, 1, bytesShouldSent, file);
 			if (readBytes != bytesShouldSent) return false;
 

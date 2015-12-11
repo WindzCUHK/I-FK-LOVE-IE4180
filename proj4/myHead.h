@@ -35,9 +35,13 @@
 #endif
 
 // 3rd party
-#include "cgicc/CgiDefs.h"
-#include "cgicc/Cgicc.h"
-#include "cgicc/CgiUtils.h"
+#ifdef WIN32
+	#include "myCgiUtils.h"	
+#else
+	#include "cgicc/CgiDefs.h"
+	#include "cgicc/Cgicc.h"
+	#include "cgicc/CgiUtils.h"
+#endif
 
 // custom header
 #include "myModel.h"

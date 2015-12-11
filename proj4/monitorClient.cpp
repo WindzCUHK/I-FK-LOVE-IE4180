@@ -276,16 +276,33 @@ int main(int argc, char *argv[]) {
 
 	// check argument
 	if (argc < 3) {
-		std::cout << "Usage: mc.exe [sync folder path] [refresh interval] [server IP] [server port] [client listen port]" << std::endl;
+		// std::cout << "Usage: mc.exe [sync folder path] [refresh interval in ms] [server IP] [server port] [client listen port]" << std::endl;
+		std::cout << "Usage: mc.exe [sync folder path] [config file path]" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	// get argument
 	std::string monitorPath(argv[1]);
-	int refreshInterval = atoi(argv[2]);
-	char *serverIP = "127.0.0.1";
-	int serverPort = 4180;
-	int listenPort = 4181;
+	// int refreshInterval = atoi(argv[2]);
+	// char *serverIP = "127.0.0.1";
+	// int serverPort = 4180;
+	// int listenPort = 4181;
+
+	// open config file
+	std::string line;
+	std::ifstream configFile(argv[2]);
+	std::getline(infile, line);
+	std::istringstream iss(line);
+	iss >> line;
+	int refreshInterval = stoi(line);
+	iss >> line;
+	char serverIP[16];
+	strncpy(serverIP, line.c_str(), 16);
+	iss >> line;
+	int serverPort = stoi(line);
+	iss >> line;
+	int listenPort = stoi(line);
+	infile.close();
 
 	// constants
 	const Protocol protocol = TCP;

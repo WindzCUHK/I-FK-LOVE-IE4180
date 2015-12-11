@@ -22,13 +22,13 @@ int getConnectSocketByAddress(Protocol protocol, struct sockaddr_in *address) {
 	// create socket
 	int type = ((protocol == UDP) ? SOCK_DGRAM : SOCK_STREAM);
 	int connectSocket = socket(AF_INET, type, 0);
-	if (connectSocket == -1) myDied("socket()");
+	if (connectSocket == -1) myDied("getConnectSocketByAddress() => socket()");
 
 	// end for UDP
 	if (protocol == UDP) return connectSocket;
 
 	// connect
-	if (connect(connectSocket, (struct sockaddr *) address , sizeof(*address)) == -1) myDied("connect()");
+	if (connect(connectSocket, (struct sockaddr *) address , sizeof(*address)) == -1) myDied("getConnectSocketByAddress() => connect()");
 
 	return connectSocket;
 }
@@ -48,7 +48,7 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 	// create socket
 	int type = ((protocol == UDP) ? SOCK_DGRAM : SOCK_STREAM);
 	connectSocket = socket(AF_INET, type, 0);
-	if (connectSocket == -1) myDied("socket()");
+	if (connectSocket == -1) myDied("getConnectSocket() => socket()");
 
 	/*
 	// set recv and send buffer size
@@ -66,7 +66,7 @@ int getConnectSocket(char *host, int port, Protocol protocol, struct sockaddr_in
 	if (protocol == UDP) return connectSocket;
 
 	// connect
-	if (connect(connectSocket, (struct sockaddr *) serverAddress , sizeof(*serverAddress)) == -1) myDied("connect()");
+	if (connect(connectSocket, (struct sockaddr *) serverAddress , sizeof(*serverAddress)) == -1) myDied("getConnectSocket() => connect()");
 
 	return connectSocket;
 }
@@ -90,7 +90,7 @@ int getListenSocket(char *host, int port, Protocol protocol, struct sockaddr_in 
 	// create socket
 	int type = (protocol == UDP) ? SOCK_DGRAM : SOCK_STREAM;
 	listenSocket = socket(AF_INET, type, 0);
-	if (listenSocket == -1) myDied("socket()");
+	if (listenSocket == -1) myDied("getListenSocket() => socket()");
 
 	/*
 	// set recv and send buffer size

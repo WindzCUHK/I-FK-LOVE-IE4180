@@ -143,10 +143,6 @@ int main(int argc, char *argv[]) {
 	// get file name from selected path
 	size_t fileNamePosition = selectedPath.find_last_of(PATH_DELIMITER);
 	restoreFilePath += selectedPath.substr(fileNamePosition + 1);
-	// FK windows
-	#ifdef WIN32
-		std::replace(restorePath.begin(), restorePath.end(), HTTP_path_delimiter.c_str(), PATH_DELIMITER);
-	#endif
 
 	// wait for server response
 	ofstream ofs;
