@@ -124,7 +124,7 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		oss << "GET response got\n";
 
 		// generate local file list
-		if (listAllFilesInDir(localfileMetas, monitorPath, false) == EXIT_FAILURE) {
+		if (listAllFilesInDir(localfileMetas, monitorPath, monitorPath, false) == EXIT_FAILURE) {
 			myDied("Cannot monitor directory!!!");
 		}
 		sort(localfileMetas.begin(), localfileMetas.end(), cmpFileMeta);

@@ -98,10 +98,20 @@ bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPack
 	int contentLength = 0;
 	char *contentLengthBegin = strstr(headerBuffer, HTTP_CONTENT_HEADER);
 	if (contentLengthBegin != NULL) {
+
+		// skip header prefix
 		contentLengthBegin += strlen(HTTP_CONTENT_HEADER);
+
+		// content-length may be last line of the header
 		char *contentLengthEnd = strstr(contentLengthBegin, constants::HTTP_line_break.c_str());
-		string tmpString(contentLengthBegin, contentLengthEnd - contentLengthBegin);
-		cout << "xx--\t" << tmpString << endl;
+		string tmpString;
+		if (contentLengthEnd == NULL) {
+			tmpString.assign(contentLengthBegin);
+		} else {
+			tmpString.assign(contentLengthBegin, contentLengthEnd - contentLengthBegin);
+		}
+
+		// string to int
 		contentLength = stoi(tmpString);
 	}
 	
@@ -182,8 +192,10 @@ bool parseAndValidateRequest(const std::string &request, std::string &method, st
 	// parse first line
 	size_t lastPosition = 0, newPosition = 0;
 	newPosition = request.find(constants::HTTP_line_break);
-	if (newPosition == std::string::npos) return false;
-	std::string requestLine = request.substr(lastPosition, newPosition);
+	// request may only have 1 line
+	std::string requestLine;
+	if (newPosition == std::string::npos) requestLine = request;
+	else requestLine = request.substr(lastPosition, newPosition);
 
 	// get request method
 	newPosition = requestLine.find(constants::HTTP_inline_delimiter, lastPosition);
@@ -196,6 +208,7 @@ bool parseAndValidateRequest(const std::string &request, std::string &method, st
 	if (newPosition == std::string::npos) return false;
 	url = request.substr(lastPosition, newPosition - lastPosition);
 	lastPosition = newPosition + constants::HTTP_inline_delimiter.length();
+
 
 	// parse absolute path, skip the domain name or IP part
 	if (url.compare(0, constants::HTTP_absolute_path_prefix.length(), constants::HTTP_absolute_path_prefix) == 0) {
@@ -258,6 +271,8 @@ bool getFileResponse(int socket, const std::string &filePath, const std::string 
 		if (myTcpSend(socket, responseHeader.c_str(), responseHeader.length()) <= 0) return false;
 	} else {
 
+		// TODO check file isDir
+
 		// get file size
 		fseek(file, 0L, SEEK_END);
 		const long contentLength = ftell(file);
@@ -286,6 +301,10 @@ bool getFileResponse(int socket, const std::string &filePath, const std::string 
 
 		fclose(file);
 	}
+
+	// debug
+	cout << "\ngetFileResponse():" << endl;
+	cout << responseHeader;
 
 	return true;
 }

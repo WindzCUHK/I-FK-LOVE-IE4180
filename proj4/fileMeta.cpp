@@ -35,7 +35,7 @@ void getFileTime(time_t *timeKey, struct stat *fileAttributes) {
 	}
 }
 
-void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen) {
+void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen, size_t rootDirPathOffset) {
 
 	// get file stat
 	struct stat fileAttributes;
@@ -49,7 +49,7 @@ void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen) {
 	bool isDir = ((S_ISDIR(fileAttributes.st_mode)) ? true : false);
 
 	// assign data
-	strncpy(meta->path, path, PATH_MAX);
+	strncpy(meta->path, path + rootDirPathOffset, PATH_MAX);
 	meta->filenameLen = filenameLen;
 	meta->timeKey = timeKey;
 	meta->isDir = isDir;
@@ -97,10 +97,10 @@ bool isEqualFileMeta(const FileMeta &a, const FileMeta &b) {
 // }
 
 void printFileMeta(FileMeta &meta) {
-	printf("{isDir: %d, timeKey: %lld, path: \"%s\"}\n", meta.isDir, (long long) meta.timeKey, meta.path);
+	printf("{isDir: %d, timeKey: %lld, name_len: %8d, path: \"%s\"}\n", meta.isDir, (long long) meta.timeKey, meta.filenameLen, meta.path);
 }
 
-int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootDirPath, bool needHidden) {
+int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootDirPath, const std::string &dirPath, bool needHidden) {
 
 	// memory
 	FileMeta meta;
@@ -110,9 +110,9 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootD
 	struct dirent *ent;
 
 	// objects
-	std::string dirPath = rootDirPath + constants::global_pathDelimiter;
+	std::string currentDirPath = dirPath + constants::global_pathDelimiter;
 
-	if ((dir = opendir(rootDirPath.c_str())) == NULL) {
+	if ((dir = opendir(dirPath.c_str())) == NULL) {
 		perror("listAllFiles() => opendir()");
 		return EXIT_FAILURE;
 	} else {
@@ -125,16 +125,16 @@ int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootD
 			}
 
 			// create file path and check file stat
-			std::string filePath = dirPath + fileName;
+			std::string filePath = currentDirPath + fileName;
 			// std::cout << filePath << std::endl;
-			initFileMeta(&meta, filePath.c_str(), fileName.length());
+			initFileMeta(&meta, filePath.c_str(), fileName.length(), rootDirPath.length());
 
 			// skip hidden directory
 			if (!meta.isDir || fileName.at(0) != HIDDEN_FILE) {
 				// append file, if needed, read directory
 				fileMetas.push_back(meta);
 				if (meta.isDir) {
-					if (listAllFilesInDir(fileMetas, filePath, needHidden) == EXIT_FAILURE) {
+					if (listAllFilesInDir(fileMetas, rootDirPath, filePath, needHidden) == EXIT_FAILURE) {
 						return EXIT_FAILURE;
 					}
 				}

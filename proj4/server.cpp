@@ -77,7 +77,7 @@ void myDelete(std::vector<FileMeta> &v, const std::string &monitorPath) {
 
 			// get local FS data
 			std::string localFilePath = monitorPath + it->path;
-			initFileMeta(&localFileMeta, localFilePath.c_str(), localFilePath.length());
+			initFileMeta(&localFileMeta, localFilePath.c_str(), localFilePath.length(), monitorPath.length());
 
 			// other client may update it (should not happen), check before take action
 			if (isEqualFileMeta(*it, localFileMeta)) {
@@ -112,7 +112,7 @@ bool createAndSendFileList(bool isRestore, int socket, const std::string &httpVe
 	std::vector<FileMeta> fileMetas;
 	{
 		std::lock_guard<std::mutex> guard(fs_changing_mutex);
-		if (listAllFilesInDir(fileMetas, monitorPath, isRestore) == EXIT_FAILURE) {
+		if (listAllFilesInDir(fileMetas, monitorPath, monitorPath, isRestore) == EXIT_FAILURE) {
 			oss << "Error: Cannot monitor directory!!!\n";
 			return false;
 		}
@@ -226,7 +226,6 @@ try {
 
 		} else if (method == constants::HTTP_GET) {
 
-			// GET /list
 			if (url.compare(constants::SERVER_list_path) == 0) {
 				oss << "GET /list\n";
 
@@ -234,19 +233,15 @@ try {
 					oss << "Error: createAndSendFileList(false)\n";
 					break;
 				}
-			}
-			// GET /restoreList
-			if (url.compare(constants::SERVER_restore_list_path) == 0) {
+			} else if (url.compare(constants::SERVER_restore_list_path) == 0) {
 				oss << "GET /restoreList\n";
 
 				if (!createAndSendFileList(true, socket, httpVersion, monitorPath, oss)) {
 					oss << "Error: createAndSendFileList(true)\n";
 					break;
 				}
-			}
-			// GET /restore
-			if (url.compare(constants::SERVER_restore_path) == 0) {
-				oss << "GET /restore\n";
+			} else if ((url.length() > constants::SERVER_restore_path.length()) && (url.compare(0, constants::SERVER_restore_path.length(), constants::SERVER_restore_path) == 0)) {
+				oss << "GET /restore/(.+)\n";
 
 				std::string filePath = url.substr(constants::SERVER_restore_path.length());
 				if (!createAndSendResponse(socket, monitorPath + filePath, httpVersion, constants::EMPTY_STRING, 0L)) {

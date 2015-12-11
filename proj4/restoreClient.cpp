@@ -11,9 +11,9 @@ string getOriginalPath(const string &path, short fileNameLength) {
 		return path;
 	} else {
 		string folderPath = path.substr(0, folderPathLength);
-		size_t timeLength = filename.find_last_of(TIME_DELIMITER);
 
-		string originalName = filename.substr(1, timeLength);
+		size_t timePosition = filename.find_last_of(TIME_DELIMITER);
+		string originalName = filename.substr(1, filename.length() - 1 - (timePosition + 1));
 
 		return folderPath + originalName;
 	}
@@ -135,17 +135,18 @@ int main(int argc, char *argv[]) {
 	}
 	cout << "sent - GET /restore" << endl;
 
-
 	// pre-process file path
 	string restoreFilePath = restorePath;
 	char *path_delimiter = PATH_DELIMITER;
+	// append '/' at the restore folder path
 	if (((char) restoreFilePath.back()) != path_delimiter[0]) restoreFilePath += path_delimiter;
-	restoreFilePath += selectedPath.substr(selectedFile->filenameLen);
+	// get file name from selected path
+	size_t fileNamePosition = selectedPath.find_last_of(PATH_DELIMITER);
+	restoreFilePath += selectedPath.substr(fileNamePosition + 1);
 	// FK windows
 	#ifdef WIN32
 		std::replace(restorePath.begin(), restorePath.end(), HTTP_path_delimiter.c_str(), PATH_DELIMITER);
 	#endif
-
 
 	// wait for server response
 	ofstream ofs;

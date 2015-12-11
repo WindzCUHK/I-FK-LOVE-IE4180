@@ -38,12 +38,12 @@ typedef std::deque<FileMeta> fileList;
 
 // method on model
 bool setFileTime(time_t *timeKey, const char *filepath);
-void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen);
+void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen, size_t rootDirPathOffset);
 bool cmpFileMeta(const FileMeta &a, const FileMeta &b);
 bool cmpFileMetaPathOnly(const FileMeta &a, const FileMeta &b);
 bool isEqualFileMeta(const FileMeta &a, const FileMeta &b);
 void printFileMeta(FileMeta &meta);
-int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootDirPath, bool needHidden);
+int listAllFilesInDir(std::vector<FileMeta> &fileMetas, const std::string &rootDirPath, const std::string &dirPath, bool needHidden);
 void getFileNameFromPath(std::string &filname, char *path, short fileNameLen);
 // serialization 
 std::string encodeFileMetas(std::vector<FileMeta> v);

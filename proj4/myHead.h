@@ -40,7 +40,7 @@
 #include "cgicc/CgiUtils.h"
 
 // custom header
-#include "model.h"
+#include "myModel.h"
 #include "myConnect.h"
 #include "myThread.h"
 
