@@ -315,22 +315,14 @@ int main(int argc, char *argv[]) {
 
 	// constants
 	const Protocol protocol = TCP;
-
-	/*|=======================================================|*/
-	/*|            Connect to server and monitor              |*/
-	/*|=======================================================|*/
-	// struct sockaddr_in serverAddress;
-	// int serverSocket = getConnectSocket(serverIP, serverPort, protocol, &serverAddress);
-	// // file monitoring thread
-	// std::thread monitorThread(monitorFile, serverSocket, std::cref(monitorPath), refreshInterval);
-
-	/*|=======================================================|*/
-	/*|             Listen to request from client             |*/
-	/*|=======================================================|*/
 	#ifdef WIN32
 		WSADATA wsa;
 		initWinsock(&wsa);
 	#endif
+
+	/*|=======================================================|*/
+	/*|             Listen to request from client             |*/
+	/*|=======================================================|*/
 	struct sockaddr_in listenAddress;
 	int listenSocket = getListenSocket(NULL, listenPort, protocol, &listenAddress);
 	// accept loop

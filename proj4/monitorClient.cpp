@@ -313,6 +313,10 @@ int main(int argc, char *argv[]) {
 
 	// constants
 	const Protocol protocol = TCP;
+	#ifdef WIN32
+		WSADATA wsa;
+		initWinsock(&wsa);
+	#endif
 
 	/*|=======================================================|*/
 	/*|            Connect to server and monitor              |*/
@@ -325,10 +329,6 @@ int main(int argc, char *argv[]) {
 	/*|=======================================================|*/
 	/*|          Listen to GET request from server            |*/
 	/*|=======================================================|*/
-	#ifdef WIN32
-		WSADATA wsa;
-		initWinsock(&wsa);
-	#endif
 	struct sockaddr_in listenAddress;
 	int listenSocket = getListenSocket(NULL, listenPort, protocol, &listenAddress);
 	// accept loop
