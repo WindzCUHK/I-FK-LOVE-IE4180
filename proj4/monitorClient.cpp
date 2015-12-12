@@ -122,6 +122,8 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		decodeFileMetas(cgicc::form_urldecode(bodyss.str()), serverFileMetas);
 		sort(serverFileMetas.begin(), serverFileMetas.end(), cmpFileMeta);
 		oss << "GET response got\n";
+		// debug
+		std::cout << "[1] bodyss.str(): " << bodyss.str() << std::endl;;
 
 		// generate local file list
 		if (listAllFilesInDir(localfileMetas, monitorPath, monitorPath, false) == EXIT_FAILURE) {
@@ -132,7 +134,7 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 
 		// difference between server and client
 		filesDifference(serverFileMetas, localfileMetas, update_list, delete_list, create_list);
-		oss << "diff local and server\n";
+		oss << "diff btw local and server\n";
 
 		// POST changes to server, HTTP pipeline
 
@@ -146,18 +148,18 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 			mySocketClose(socket);
 			return;
 		}
-		oss << "POST /create\n";
-		contentString = listenPortString + constants::HTTP_inline_delimiter + cgicc::form_urlencode(encodeFileMetas(create_list));
-		if (!createAndSendRequest(socket, false, constants::SERVER_create_path, httpVersion, true, contentString.c_str(), contentString.length())) {
-			oss << "Error createAndSendRequest(): sending POST /create request\n";
-			threadPrint(oss.str().c_str(), "\n");
-			mySocketClose(socket);
-			return;
-		}
 		oss << "POST /update\n";
 		contentString = listenPortString + constants::HTTP_inline_delimiter + cgicc::form_urlencode(encodeFileMetas(update_list));
 		if (!createAndSendRequest(socket, false, constants::SERVER_update_path, httpVersion, true, contentString.c_str(), contentString.length())) {
 			oss << "Error createAndSendRequest(): sending POST /update request\n";
+			threadPrint(oss.str().c_str(), "\n");
+			mySocketClose(socket);
+			return;
+		}
+		oss << "POST /create\n";
+		contentString = listenPortString + constants::HTTP_inline_delimiter + cgicc::form_urlencode(encodeFileMetas(create_list));
+		if (!createAndSendRequest(socket, false, constants::SERVER_create_path, httpVersion, true, contentString.c_str(), contentString.length())) {
+			oss << "Error createAndSendRequest(): sending POST /create request\n";
 			threadPrint(oss.str().c_str(), "\n");
 			mySocketClose(socket);
 			return;
@@ -170,6 +172,8 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 			mySocketClose(socket);
 			return;
 		}
+		// debug
+		std::cout << "[2] bodyss.str(): " << bodyss.str() << std::endl;;
 		bodyss.str("");
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving POST /update response\n";
@@ -177,6 +181,8 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 			mySocketClose(socket);
 			return;
 		}
+		// debug
+		std::cout << "[3 bodyss.str(): " << bodyss.str() << std::endl;;
 		bodyss.str("");
 		if (!myResponseRecv(socket, bodyss)) {
 			oss << "Error myResponseRecv(): receiving POST /create response\n";
@@ -184,6 +190,8 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 			mySocketClose(socket);
 			return;
 		}
+		// debug
+		std::cout << "[4] bodyss.str(): " << bodyss.str() << std::endl;;
 		oss << "POST response DONE\n";
 
 		// clear up vectors
@@ -194,7 +202,7 @@ void monitorFile(int socket, const std::string &monitorPath, int refreshInterval
 		create_list.clear();
 
 		// loop ending
-		oss << "=== monitor loop end! Waiting " << refreshInterval << "ms ...\n";
+		oss << "=== monitor loop end! Waiting " << refreshInterval << " ms ...\n";
 		threadPrint(oss.str().c_str(), "\n");
 		oss.str("");
 
@@ -234,7 +242,6 @@ void httpGetHandler(int socket, const std::string &path) {
 	}
 	
 	// create response
-	oss << "Request file path: " << url << '\n';
 	if (!createAndSendResponse(socket, path + url, httpVersion, constants::EMPTY_STRING, 0L)) {
 		oss << "Error: file IO OR send()\n";
 		threadPrint(oss.str().c_str(), "\n");

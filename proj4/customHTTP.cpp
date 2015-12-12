@@ -66,9 +66,12 @@ bool myHttpHeaderRecv(int socket, char *buffer, int bufferSize, int *httpPackage
 	int gotBytes = 0, result;
 	memset(buffer, '\0', bufferSize);
 
+	int endingLength = strlen(HTTP_REQUEST_ENDING);
+
 	// loop until request end
 	do {
-		result = recv(socket, buffer + gotBytes, bufferSize - gotBytes, 0);
+		// provide getting >1 packet at the same time...
+		result = recv(socket, buffer + gotBytes, 1, 0);
 		if (result == 0) {
 			perror("myHttpHeaderRecv(): unexpected client socket close");
 			return false;
@@ -81,7 +84,7 @@ bool myHttpHeaderRecv(int socket, char *buffer, int bufferSize, int *httpPackage
 		if (gotBytes >= bufferSize - 1) return false;
 
 		// search for request ending
-		headerEnding = strstr(buffer, HTTP_REQUEST_ENDING);
+		headerEnding = strstr(buffer + gotBytes - endingLength, HTTP_REQUEST_ENDING);
 
 	} while (headerEnding == NULL);
 
@@ -114,6 +117,8 @@ bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPack
 		// string to int
 		contentLength = stoi(tmpString);
 	}
+
+	cout << "[myHttpBodyRecv()]\t" << "contentLength: " << contentLength << endl;
 	
 	// write body content to stream buffer
 	if (contentLength > 0) {
@@ -122,6 +127,10 @@ bool myHttpBodyRecv(int socket, char *headerBuffer, int bufferSize, int httpPack
 		char *bodyStart = headerBuffer + strlen(headerBuffer) + strlen(HTTP_REQUEST_ENDING);
 		int bodyGot = httpPackageSizeGot - (bodyStart - headerBuffer);
 		os.write(bodyStart, bodyGot);
+
+		cout << "[myHttpBodyRecv()]\t" << "bodyStart: " << bodyStart << endl;
+		cout << "[myHttpBodyRecv()]\t" << "bodyGot: " << bodyGot << endl;
+		cout << "[myHttpBodyRecv()]\t" << "take more body: " << (contentLength - bodyGot > 0) << endl;
 
 		// take body from socket
 		if (contentLength - bodyGot > 0) {
@@ -147,6 +156,10 @@ bool myResponseRecv(int socket, std::ostream &os) {
 		return false;
 	}
 
+	// debug
+	cout << "myResponseRecv() => buffer:\n" << buffer << endl;
+	cout << endl;
+
 	// check 200 OK
 	if (strstr(buffer, "200") != (buffer + constants::REQUEST_default_http_version.length() + constants::HTTP_inline_delimiter.length())) {
 		perror("Error: myResponseRecv() => HTTP not 200 OK");
@@ -158,9 +171,6 @@ bool myResponseRecv(int socket, std::ostream &os) {
 		perror("Error: myResponseRecv() => myHttpBodyRecv()");
 		return false;
 	}
-
-	// debug
-	cout << buffer << endl;
 
 	return true;
 }
@@ -183,6 +193,8 @@ bool myRequestRecv(int socket, char *buffer, int bufferSize, std::ostringstream 
 		perror("Error: myRequestRecv() => myHttpBodyRecv()");
 		return false;
 	}
+
+	cout << "myRequestRecv() => header:\n" << buffer << endl;
 
 	return true;
 }
@@ -208,7 +220,6 @@ bool parseAndValidateRequest(const std::string &request, std::string &method, st
 	if (newPosition == std::string::npos) return false;
 	url = request.substr(lastPosition, newPosition - lastPosition);
 	lastPosition = newPosition + constants::HTTP_inline_delimiter.length();
-
 
 	// parse absolute path, skip the domain name or IP part
 	if (url.compare(0, constants::HTTP_absolute_path_prefix.length(), constants::HTTP_absolute_path_prefix) == 0) {
@@ -298,8 +309,7 @@ bool getFileResponse(int socket, const std::string &filePath, const std::string 
 	}
 
 	// debug
-	cout << "\ngetFileResponse():" << endl;
-	cout << responseHeader;
+	cout << "\ngetFileResponse() => header:\n" << responseHeader << endl;
 
 	return true;
 }
@@ -314,7 +324,9 @@ bool contentResponse(int socket, const std::string &httpVersion, bool isKeepAliv
 	if (myTcpSend(socket, content.c_str(), contentLength) <= 0) return false;
 
 	// debug
-	cout << "response: \n" << responseHeader << content << endl;
+	cout << "contentResponse() => header:\n" << responseHeader;
+	cout << "contentResponse() => content:\n" << content << endl;
+	cout << endl;
 
 	return true;
 }
@@ -334,6 +346,8 @@ bool createAndSendOK(int socket, const std::string &httpVersion) {
 	std::string responseHeader;
 	construtHttpResponseHeader(responseHeader, true, httpVersion, constants::EMPTY_STRING, 0L, true);
 	if (myTcpSend(socket, responseHeader.c_str(), responseHeader.length()) <= 0) return false;
+	// debug
+	cout << "createAndSendOK() => header\n" << responseHeader << endl;
 
 	return true;
 }
@@ -359,14 +373,14 @@ bool createAndSendRequest(int socket, bool isGet, const std::string &url, const 
 	// header ending
 	header += constants::HTTP_line_break;
 
-	// debug
-	cout << header << endl;
-	if (content != NULL) cout << content << endl;
-
 	// send header and content
 	if (myTcpSend(socket, header.c_str(), header.length()) <= 0) return false;
+	// debug
+	cout << "createAndSendRequest() => header\n" << header;
 	if (!isGet && contentSize > 0) {
 		if (myTcpSend(socket, content, contentSize) <= 0) return false;
+		// debug
+		cout << "createAndSendRequest() => body\n" << content << endl;
 	}
 
 	return true;

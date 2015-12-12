@@ -13,7 +13,7 @@ string getOriginalPath(const string &path, short fileNameLength) {
 		string folderPath = path.substr(0, folderPathLength);
 
 		size_t timePosition = filename.find_last_of(TIME_DELIMITER);
-		string originalName = filename.substr(1, filename.length() - 1 - (timePosition + 1));
+		string originalName = filename.substr(1, timePosition - 1);
 
 		return folderPath + originalName;
 	}
@@ -57,8 +57,6 @@ int main(int argc, char *argv[]) {
 	}
 	decodeFileMetas(cgicc::form_urldecode(bodyss.str()), serverFileMetas);
 	sort(serverFileMetas.begin(), serverFileMetas.end(), cmpFileMeta);
-	// debug
-	cout << bodyss.str() << endl;
 	cout << "got - GET /restoreList" << endl;
 
 	// debug

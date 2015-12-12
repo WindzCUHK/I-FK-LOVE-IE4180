@@ -99,11 +99,17 @@ void myDelete(std::vector<FileMeta> &v, const std::string &monitorPath) {
 	}
 }
 
-void parsePostBody(std::string bodyString, short *clientListenPort, std::vector<FileMeta> &v) {
+void parsePostBody(std::string bodyString, short *clientListenPort, std::vector<FileMeta> &v, std::ostringstream &oss) {
 	std::size_t found = bodyString.find(constants::HTTP_inline_delimiter);
 	*clientListenPort = (short) stoi(bodyString.substr(0, found));
 	v.clear();
-	decodeFileMetas(cgicc::form_urldecode(bodyString.substr(found + 1)), v);
+
+	// nothing change implies empty body
+	if ((found + 1) != bodyString.length()) {
+		decodeFileMetas(cgicc::form_urldecode(bodyString.substr(found + 1)), v);
+	} else {
+		oss << "Nothing to be changed~\n";
+	}
 }
 
 bool createAndSendFileList(bool isRestore, int socket, const std::string &httpVersion, const std::string &monitorPath, std::ostringstream &oss) {
@@ -117,9 +123,6 @@ bool createAndSendFileList(bool isRestore, int socket, const std::string &httpVe
 			return false;
 		}
 	}
-
-	// debug
-	for (auto &fm: fileMetas) {printFileMeta(fm);}
 
 	// send file list
 	std::string contentString = cgicc::form_urlencode(encodeFileMetas(fileMetas));
@@ -150,6 +153,10 @@ try {
 			break;
 		}
 		oss << "HTTP request:\n" << buffer << '\n';
+		// debug
+		std::cout << "myRequestRecv() => body:\n" << bodyss.str() << std::endl;
+
+
 
 		// process request
 		const std::string requestString = buffer;
@@ -160,7 +167,6 @@ try {
 		}
 
 		// create response
-		oss << "Request file path: " << url << '\n';
 		if (method == constants::HTTP_POST) {
 
 			// variables for parse POST body
@@ -172,13 +178,13 @@ try {
 
 			// POST /delete
 			if (url.compare(constants::SERVER_delete_path) == 0) {
-				oss << "POST /delete\n";
+				std::cout << "```POST /delete\n";
 
 				// lock
 				fs_changing_mutex.lock();
 
 				// take delete action
-				parsePostBody(bodyString, &clientListenPort, diffVector);
+				parsePostBody(bodyString, &clientListenPort, diffVector, oss);
 				myDelete(diffVector, monitorPath);
 
 				// send 200 OK
@@ -190,10 +196,10 @@ try {
 			}
 			// POST /update
 			if (url.compare(constants::SERVER_update_path) == 0) {
-				oss << "POST /update\n";
+				std::cout << "```POST /update\n";
 
 				// take update action
-				parsePostBody(bodyString, &clientListenPort, diffVector);
+				parsePostBody(bodyString, &clientListenPort, diffVector, oss);
 				myDelete(diffVector, monitorPath);
 				address.sin_port = htons(clientListenPort);
 				myCreate(diffVector, monitorPath, &address);
@@ -207,10 +213,10 @@ try {
 			}
 			// POST /create
 			if (url.compare(constants::SERVER_create_path) == 0) {
-				oss << "POST /create\n";
+				std::cout << "```POST /create\n";
 
 				// take create action
-				parsePostBody(bodyString, &clientListenPort, diffVector);
+				parsePostBody(bodyString, &clientListenPort, diffVector, oss);
 				address.sin_port = htons(clientListenPort);
 				myCreate(diffVector, monitorPath, &address);
 
@@ -227,21 +233,21 @@ try {
 		} else if (method == constants::HTTP_GET) {
 
 			if (url.compare(constants::SERVER_list_path) == 0) {
-				oss << "GET /list\n";
+				std::cout << "```GET /list\n";
 
 				if (!createAndSendFileList(false, socket, httpVersion, monitorPath, oss)) {
 					oss << "Error: createAndSendFileList(false)\n";
 					break;
 				}
 			} else if (url.compare(constants::SERVER_restore_list_path) == 0) {
-				oss << "GET /restoreList\n";
+				std::cout << "```GET /restoreList\n";
 
 				if (!createAndSendFileList(true, socket, httpVersion, monitorPath, oss)) {
 					oss << "Error: createAndSendFileList(true)\n";
 					break;
 				}
 			} else if ((url.length() > constants::SERVER_restore_path.length()) && (url.compare(0, constants::SERVER_restore_path.length(), constants::SERVER_restore_path) == 0)) {
-				oss << "GET /restore/(.+)\n";
+				std::cout << "```GET /restore/(.+)\n";
 
 				std::string filePath = url.substr(constants::SERVER_restore_path.length());
 				if (!createAndSendResponse(socket, monitorPath + filePath, httpVersion, constants::EMPTY_STRING, 0L)) {
