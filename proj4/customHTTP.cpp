@@ -321,8 +321,10 @@ bool contentResponse(int socket, const std::string &httpVersion, bool isKeepAliv
 
 	construtHttpResponseHeader(responseHeader, true, httpVersion, contentType, contentLength, isKeepAlive);
 	if (myTcpSend(socket, responseHeader.c_str(), responseHeader.length()) <= 0) return false;
-	if (myTcpSend(socket, content.c_str(), contentLength) <= 0) return false;
-
+	if (contentLength > 0) {
+		if (myTcpSend(socket, content.c_str(), contentLength) <= 0) return false;
+	}
+	
 	// debug
 	cout << "contentResponse() => header:\n" << responseHeader;
 	cout << "contentResponse() => content:\n" << content << endl;
