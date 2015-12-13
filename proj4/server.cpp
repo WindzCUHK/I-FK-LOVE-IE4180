@@ -40,7 +40,8 @@ void donwloadFileHandler(struct sockaddr_in address, FileMeta fm, const std::str
 
 	// set file modification time  as client
 	oss << "change file modification date\n";
-	if (!setFileTime(&(fm.timeKey), fm.path)) {
+	std::string serverFilePath = monitorPath + fm.path;
+	if (!setFileTime(&(fm.timeKey), serverFilePath.c_str())) {
 		oss << "Error setFileTime(): GET " << url;
 		threadPrint(oss.str().c_str(), "\n");
 		return;

@@ -12,7 +12,7 @@ bool setFileTime(time_t *timeKey, const char *filepath) {
 	}
 
 	// access time unchange
-	new_times.actime = fileStat.st_atime;
+	new_times.actime = *timeKey;
 	new_times.modtime = *timeKey;
 	if (utime(filepath, &new_times) < 0) {
 		perror(filepath);
@@ -25,14 +25,15 @@ bool setFileTime(time_t *timeKey, const char *filepath) {
 // private methods
 void getFileTime(time_t *timeKey, struct stat *fileAttributes) {
 
-	time_t ctime = fileAttributes->st_ctime;
+	// time_t ctime = fileAttributes->st_ctime;
 	time_t mtime = fileAttributes->st_mtime;
 
-	if (difftime(ctime, mtime) > 0) {
-		*timeKey = ctime;
-	} else {
-		*timeKey = mtime;
-	}
+	// if (difftime(ctime, mtime) > 0) {
+	// 	*timeKey = ctime;
+	// } else {
+	// 	*timeKey = mtime;
+	// }
+	*timeKey = mtime;
 }
 
 void initFileMeta(FileMeta *meta, const char *path, size_t filenameLen, size_t rootDirPathOffset) {
