@@ -109,9 +109,12 @@ int main(int argc, char *argv[]) {
 	string selectedPath = pathKeys[pathIndex];
 	cout << "Version can be restored for " << selectedPath << ":\n";
 	int i = 0;
+	const size_t timePrintingBufferSize = 20;
+	char timePrintingBuffer[timePrintingBufferSize];
 	for (auto &timeMapPair: fileMap[selectedPath]) {
 		timeKeys.push_back(timeMapPair.first);
-		cout << "  " << i << "\t - " << timeMapPair.first << '\n';
+		strftime(timePrintingBuffer, timePrintingBufferSize, "%Y-%m-%d %H:%M:%S", localtime(&(timeMapPair.first)));
+		cout << "  " << i << "\t - " << timePrintingBuffer << '\n';
 		i++;
 	}
 
